@@ -37,6 +37,8 @@ public class Appointment {
     @JsonIgnoreProperties({"appointments"})
     private User user;
 
+    public Appointment() {}
+
     public Appointment(Integer id, LocalTime time, String status) {
         this.id = id;
         this.time = time;

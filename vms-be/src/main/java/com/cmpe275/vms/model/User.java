@@ -1,5 +1,6 @@
 package com.cmpe275.vms.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -8,11 +9,36 @@ import java.util.List;
 import java.util.Date;
 
 enum Gender {
-    MALE, FEMALE, OTHER
+    MALE, FEMALE, OTHER;
+
+    public Gender getValue(String g) throws IllegalArgumentException {
+        switch (g) {
+            case "male":
+                return MALE;
+            case "female":
+                return FEMALE;
+            case "other":
+                return OTHER;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+    }
 }
 
 enum Role {
-    PATIENT, ADMIN
+    PATIENT, ADMIN;
+    public Role getValue(String r) throws IllegalArgumentException {
+        switch (r) {
+            case "patient":
+                return PATIENT;
+            case "admin":
+                return ADMIN;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+    }
 }
 
 @Entity
@@ -38,11 +64,16 @@ public class User {
     @Enumerated(EnumType.ORDINAL)
     private Role role;
 
+    @JsonIgnore
+    private String password;
+
     private Boolean isVerified = false;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties({"user"})
     private List<Appointment> appointments;
+
+    public User() {}
 
     public User(String mrn, String firstName, String middleName, String lastName, String email, Date dateOfBirth, Gender gender, Address address, Role role) {
         this.mrn = mrn;
@@ -142,5 +173,29 @@ public class User {
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "mrn='" + mrn + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", gender=" + gender +
+                ", address=" + address +
+                ", role=" + role +
+                ", isVerified=" + isVerified +
+                '}';
     }
 }

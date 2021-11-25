@@ -27,6 +27,7 @@ public class Vaccine {
     @JsonIgnoreProperties({"vaccines"})
     private List<Appointment> appointments;
 
+    public Vaccine() {}
 
     public Vaccine(Integer id, String name, String manufacturer, Integer numOfShots, Integer shotInterval, Integer duration) {
         this.id = id;

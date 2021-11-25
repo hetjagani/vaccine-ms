@@ -27,6 +27,8 @@ public class Clinic {
     @JsonIgnoreProperties({"clinic"})
     private List<Appointment> appointments;
 
+    public Clinic() {}
+
     public Clinic(Integer id, Address address, LocalTime startTime, LocalTime endTime, Integer numberOfPhysicians) {
         this.id = id;
         this.address = address;
