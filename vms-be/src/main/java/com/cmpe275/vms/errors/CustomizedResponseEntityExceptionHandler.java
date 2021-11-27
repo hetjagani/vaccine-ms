@@ -4,6 +4,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,4 +38,15 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<Error>(resp, resp.getStatus());
     }
 
+    @ExceptionHandler(UserAlreadyExists.class)
+    protected ResponseEntity handleUserAlreadyExistException(UserAlreadyExists ex) {
+        Error resp = new Error(HttpStatus.CONFLICT, ex.getMessage());
+        return new ResponseEntity<Error>(resp, resp.getStatus());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    protected ResponseEntity handleBadCredentialsException(BadCredentialsException ex) {
+        Error resp = new Error(HttpStatus.FORBIDDEN, ex.getMessage());
+        return new ResponseEntity<Error>(resp, resp.getStatus());
+    }
 }

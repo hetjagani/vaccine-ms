@@ -1,6 +1,7 @@
 package com.cmpe275.vms.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Instant;
@@ -20,9 +21,10 @@ public class UserRequest {
     private Date dateOfBirth;
 
     private Boolean isVerified = false;
-    private String gender;
-    private String role;
+    private Gender gender;
+    private Role role;
     private Address address;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String password;
 
     public UserRequest() {}
@@ -91,19 +93,19 @@ public class UserRequest {
         this.address = address;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

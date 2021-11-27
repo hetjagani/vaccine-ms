@@ -2,44 +2,12 @@ package com.cmpe275.vms.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.sun.istack.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.List;
 import java.util.Date;
-
-enum Gender {
-    MALE, FEMALE, OTHER;
-
-    public Gender getValue(String g) throws IllegalArgumentException {
-        switch (g) {
-            case "male":
-                return MALE;
-            case "female":
-                return FEMALE;
-            case "other":
-                return OTHER;
-            default:
-                throw new IllegalArgumentException();
-        }
-
-    }
-}
-
-enum Role {
-    PATIENT, ADMIN;
-    public Role getValue(String r) throws IllegalArgumentException {
-        switch (r) {
-            case "patient":
-                return PATIENT;
-            case "admin":
-                return ADMIN;
-            default:
-                throw new IllegalArgumentException();
-        }
-
-    }
-}
 
 @Entity
 public class User {
@@ -65,6 +33,7 @@ public class User {
     private Role role;
 
     @JsonIgnore
+    @NotNull
     private String password;
 
     private Boolean isVerified = false;
@@ -196,6 +165,7 @@ public class User {
                 ", address=" + address +
                 ", role=" + role +
                 ", isVerified=" + isVerified +
+                ", password =" + password +
                 '}';
     }
 }
