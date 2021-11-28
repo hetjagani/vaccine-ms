@@ -2,19 +2,14 @@ package com.cmpe275.vms.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 public class UserRequest {
-    private String mrn;
     private String firstName;
     private String middleName;
     private String lastName;
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     private String email;
 
     @JsonFormat(pattern = "MM-dd-yyyy")
@@ -28,14 +23,6 @@ public class UserRequest {
     private String password;
 
     public UserRequest() {}
-
-    public String getMrn() {
-        return mrn;
-    }
-
-    public void setMrn(String mrn) {
-        this.mrn = mrn;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -120,7 +107,6 @@ public class UserRequest {
     @Override
     public String toString() {
         return "UserRequest{" +
-                "mrn='" + mrn + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", middleName='" + middleName + '\'' +
                 ", lastName='" + lastName + '\'' +

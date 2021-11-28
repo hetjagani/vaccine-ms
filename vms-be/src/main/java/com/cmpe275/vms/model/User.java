@@ -1,8 +1,12 @@
 package com.cmpe275.vms.model;
 
+import com.cmpe275.vms.repository.UserRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -16,6 +20,7 @@ public class User {
     private String firstName;
     private String middleName;
     private String lastName;
+    private Date createdAt;
 
     @Column(unique = true)
     private String email;
@@ -42,6 +47,9 @@ public class User {
     @JsonIgnoreProperties({"user"})
     private List<Appointment> appointments;
 
+    @Transient
+    private static Integer nextMrn;
+
     public User() {}
 
     public User(String mrn, String firstName, String middleName, String lastName, String email, Date dateOfBirth, Gender gender, Address address, Role role) {
@@ -54,6 +62,26 @@ public class User {
         this.gender = gender;
         this.address = address;
         this.role = role;
+        this.createdAt = new Date();
+    }
+
+    public User(UserRepository userRepository, String firstName, String middleName, String lastName, String email, Date dateOfBirth, Gender gender, Address address, Role role) {
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.email = email;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.address = address;
+        this.role = role;
+        this.createdAt = new Date();
+
+        List<User> users = userRepository.findAll(Sort.by(Sort.Order.desc("createdAt")));
+        if(users.size() > 0) {
+            this.mrn = String.valueOf(Integer.parseInt(users.get(0).mrn)+1);
+        } else {
+            this.mrn = String.valueOf(1000);
+        }
     }
 
     public String getMrn() {
