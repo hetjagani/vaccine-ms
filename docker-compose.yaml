@@ -11,3 +11,20 @@ services:
       - MYSQL_DATABASE=vaccine-ms
     volumes:
       - ./data:/var/lib/mysql
+
+  frontend:
+    depends_on:
+      - mysqldb
+    build:
+      context: ./vms-fe
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - type: bind
+        source: ./vms-fe
+        target: /app
+      - type: bind
+        source: ./vms-fe/node_modules
+        target: /app/node_modules
+    restart: unless-stopped
