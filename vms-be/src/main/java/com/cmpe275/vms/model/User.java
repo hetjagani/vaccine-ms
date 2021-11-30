@@ -4,14 +4,13 @@ import com.cmpe275.vms.repository.UserRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.util.List;
+import javax.validation.constraints.Email;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class User {
@@ -22,19 +21,20 @@ public class User {
     private String lastName;
     private Date createdAt;
 
+    @Email
     @Column(unique = true)
     private String email;
 
     @DateTimeFormat(pattern="dd-MM-yyyy")
     private Date dateOfBirth;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Embedded
     private Address address;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @JsonIgnore
@@ -43,14 +43,22 @@ public class User {
 
     private Boolean isVerified = false;
 
+    private AuthProvider provider;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties({"user"})
     private List<Appointment> appointments;
 
-    @Transient
-    private static Integer nextMrn;
-
     public User() {}
+
+    public User(UserRepository userRepository) {
+        List<User> users = userRepository.findAll(Sort.by(Sort.Order.desc("createdAt")));
+        if(users.size() > 0) {
+            this.mrn = String.valueOf(Integer.parseInt(users.get(0).mrn)+1);
+        } else {
+            this.mrn = String.valueOf(1000);
+        }
+    }
 
     public User(String mrn, String firstName, String middleName, String lastName, String email, Date dateOfBirth, Gender gender, Address address, Role role) {
         this.mrn = mrn;
@@ -178,6 +186,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public AuthProvider getProvider() {
+        return provider;
+    }
+
+    public void setProvider(AuthProvider provider) {
+        this.provider = provider;
     }
 
     @Override

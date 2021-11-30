@@ -1,15 +1,23 @@
-package com.cmpe275.vms.model;
+package com.cmpe275.vms.payload;
 
+import com.cmpe275.vms.model.Address;
+import com.cmpe275.vms.model.Gender;
+import com.cmpe275.vms.model.Role;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
 public class UserRequest {
+    @NotBlank
     private String firstName;
     private String middleName;
     private String lastName;
-    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+
+    @Email
+    @NotBlank
     private String email;
 
     @JsonFormat(pattern = "MM-dd-yyyy")
@@ -19,6 +27,8 @@ public class UserRequest {
     private Gender gender;
     private Role role;
     private Address address;
+
+    @NotBlank
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String password;
 
@@ -72,27 +82,27 @@ public class UserRequest {
         isVerified = verified;
     }
 
-    public Address getAddress() {
+    public com.cmpe275.vms.model.Address getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(com.cmpe275.vms.model.Address address) {
         this.address = address;
     }
 
-    public Gender getGender() {
+    public com.cmpe275.vms.model.Gender getGender() {
         return gender;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(com.cmpe275.vms.model.Gender gender) {
         this.gender = gender;
     }
 
-    public Role getRole() {
+    public com.cmpe275.vms.model.Role getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(com.cmpe275.vms.model.Role role) {
         this.role = role;
     }
 

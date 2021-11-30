@@ -1,4 +1,4 @@
-package com.cmpe275.vms.model;
+package com.cmpe275.vms.payload;
 
 public class AuthResponse {
     String token;

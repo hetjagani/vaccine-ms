@@ -1,4 +1,4 @@
-package com.cmpe275.vms.errors;
+package com.cmpe275.vms.exception;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -8,11 +8,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -22,6 +20,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler(Exception.class)
     public final ResponseEntity handleResponseException(Exception ex) {
+        ex.printStackTrace();
         Error resp = new Error(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
         return new ResponseEntity<Error>(resp, resp.getStatus());
     }
@@ -38,8 +37,8 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<Error>(resp, resp.getStatus());
     }
 
-    @ExceptionHandler(UserAlreadyExists.class)
-    protected ResponseEntity handleUserAlreadyExistException(UserAlreadyExists ex) {
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    protected ResponseEntity handleUserAlreadyExistException(UserAlreadyExistsException ex) {
         Error resp = new Error(HttpStatus.CONFLICT, ex.getMessage());
         return new ResponseEntity<Error>(resp, resp.getStatus());
     }

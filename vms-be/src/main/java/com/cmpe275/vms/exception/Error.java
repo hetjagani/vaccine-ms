@@ -1,4 +1,4 @@
-package com.cmpe275.vms.errors;
+package com.cmpe275.vms.exception;
 
 import org.springframework.http.HttpStatus;
 

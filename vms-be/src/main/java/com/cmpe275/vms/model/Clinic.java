@@ -25,7 +25,7 @@ public class Clinic {
 
     @OneToMany(mappedBy = "clinic", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties({"clinic"})
-    private List<Appointment> appointments;
+    private List<com.cmpe275.vms.model.Appointment> appointments;
 
     public Clinic() {}
 
@@ -77,11 +77,11 @@ public class Clinic {
         this.numberOfPhysicians = numberOfPhysicians;
     }
 
-    public List<Appointment> getAppointments() {
+    public List<com.cmpe275.vms.model.Appointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<Appointment> appointments) {
+    public void setAppointments(List<com.cmpe275.vms.model.Appointment> appointments) {
         this.appointments = appointments;
     }
 }

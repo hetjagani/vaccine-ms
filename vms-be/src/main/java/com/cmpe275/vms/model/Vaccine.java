@@ -21,11 +21,11 @@ public class Vaccine {
 
     @ManyToMany(mappedBy = "vaccines")
     @JsonIgnoreProperties({"vaccines"})
-    private List<Disease> diseases;
+    private List<com.cmpe275.vms.model.Disease> diseases;
 
     @ManyToMany(mappedBy = "vaccines")
     @JsonIgnoreProperties({"vaccines"})
-    private List<Appointment> appointments;
+    private List<com.cmpe275.vms.model.Appointment> appointments;
 
     public Vaccine() {}
 
@@ -86,19 +86,19 @@ public class Vaccine {
         this.duration = duration;
     }
 
-    public List<Disease> getDiseases() {
+    public List<com.cmpe275.vms.model.Disease> getDiseases() {
         return diseases;
     }
 
-    public void setDiseases(List<Disease> diseases) {
+    public void setDiseases(List<com.cmpe275.vms.model.Disease> diseases) {
         this.diseases = diseases;
     }
 
-    public List<Appointment> getAppointments() {
+    public List<com.cmpe275.vms.model.Appointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<Appointment> appointments) {
+    public void setAppointments(List<com.cmpe275.vms.model.Appointment> appointments) {
         this.appointments = appointments;
     }
 }
