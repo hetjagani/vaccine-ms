@@ -43,6 +43,7 @@ public class User {
 
     private Boolean isVerified = false;
 
+    @Enumerated(EnumType.STRING)
     private AuthProvider provider;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)

@@ -6,6 +6,9 @@ import axios from 'axios';
 import { setCookie } from 'react-use-cookie';
 
 const Login = () => {
+  const OAUTH2_REDIRECT_URI = 'http://localhost:3000/oauth2/redirect';
+  const GOOGLE_AUTH_URL =
+    window.BACKEND_API_URL + '/oauth2/authorize/google?redirect_uri=' + OAUTH2_REDIRECT_URI;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -61,7 +64,7 @@ const Login = () => {
           </Button>
           <Button variant="primary">
             <a
-              href="http://localhost:8080/users/oauth2/authorization/google"
+              href={GOOGLE_AUTH_URL}
               style={{ color: 'white', textDecoration: 'none' }}
             >
               Login with Google
