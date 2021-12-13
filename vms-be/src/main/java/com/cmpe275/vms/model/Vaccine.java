@@ -3,7 +3,9 @@ package com.cmpe275.vms.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.util.List;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Vaccine {
@@ -21,16 +23,15 @@ public class Vaccine {
 
     @ManyToMany(mappedBy = "vaccines")
     @JsonIgnoreProperties({"vaccines"})
-    private List<com.cmpe275.vms.model.Disease> diseases;
+    private Set<com.cmpe275.vms.model.Disease> diseases = new HashSet<com.cmpe275.vms.model.Disease>();
 
     @ManyToMany(mappedBy = "vaccines")
     @JsonIgnoreProperties({"vaccines"})
-    private List<com.cmpe275.vms.model.Appointment> appointments;
+    private Set<com.cmpe275.vms.model.Appointment> appointments;
 
     public Vaccine() {}
 
-    public Vaccine(Integer id, String name, String manufacturer, Integer numOfShots, Integer shotInterval, Integer duration) {
-        this.id = id;
+    public Vaccine(String name, String manufacturer, Integer numOfShots, Integer shotInterval, Integer duration) {
         this.name = name;
         this.manufacturer = manufacturer;
         this.numOfShots = numOfShots;
@@ -86,19 +87,19 @@ public class Vaccine {
         this.duration = duration;
     }
 
-    public List<com.cmpe275.vms.model.Disease> getDiseases() {
+    public Set<com.cmpe275.vms.model.Disease> getDiseases() {
         return diseases;
     }
 
-    public void setDiseases(List<com.cmpe275.vms.model.Disease> diseases) {
+    public void setDiseases(Set<com.cmpe275.vms.model.Disease> diseases) {
         this.diseases = diseases;
     }
 
-    public List<com.cmpe275.vms.model.Appointment> getAppointments() {
+    public Set<com.cmpe275.vms.model.Appointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<com.cmpe275.vms.model.Appointment> appointments) {
+    public void setAppointments(Set<com.cmpe275.vms.model.Appointment> appointments) {
         this.appointments = appointments;
     }
 }

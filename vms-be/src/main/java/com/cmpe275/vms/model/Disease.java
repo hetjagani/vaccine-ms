@@ -3,7 +3,9 @@ package com.cmpe275.vms.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.util.List;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Disease {
@@ -22,7 +24,7 @@ public class Disease {
             inverseJoinColumns = {@JoinColumn(name = "vaccine_id", referencedColumnName = "id")}
     )
     @JsonIgnoreProperties({"diseases"})
-    private List<Vaccine> vaccines;
+    private Set<com.cmpe275.vms.model.Vaccine> vaccines = new HashSet<com.cmpe275.vms.model.Vaccine>();
 
     public Disease() {}
 
@@ -55,11 +57,11 @@ public class Disease {
         this.description = description;
     }
 
-    public List<Vaccine> getVaccines() {
+    public Set<Vaccine> getVaccines() {
         return vaccines;
     }
 
-    public void setVaccines(List<Vaccine> vaccines) {
+    public void setVaccines(Set<com.cmpe275.vms.model.Vaccine> vaccines) {
         this.vaccines = vaccines;
     }
 }
