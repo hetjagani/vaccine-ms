@@ -4,6 +4,8 @@ import { Form } from 'react-bootstrap';
 import styles from './Login.module.css';
 import axios from 'axios';
 import { setCookie } from 'react-use-cookie';
+import Navigation from '../../components/Navigation';
+import iconGoogle from '../../assets/images/icon-google.png';
 
 const Login = () => {
   const OAUTH2_REDIRECT_URI = 'http://localhost:3000/oauth2/redirect';
@@ -17,7 +19,7 @@ const Login = () => {
     const data = { email, password };
 
     axios
-      .post(`/users/login`, data)
+      .post(`/auth/login`, data)
       .then((res) => {
         const token = res?.data?.token;
 
@@ -32,11 +34,7 @@ const Login = () => {
 
   return (
     <div>
-      <Navbar expand="lg" variant="light" bg="light">
-        <Container>
-          <Navbar.Brand href="#">Vaccine Management System</Navbar.Brand>
-        </Container>
-      </Navbar>
+      <Navigation />
       <Container className={styles.main} fluid="sm">
         <Form onSubmit={submitForm}>
           <Form.Group className={styles.formGroup} controlId="formBasicEmail">
@@ -60,16 +58,17 @@ const Login = () => {
             />
           </Form.Group>
           <Button variant="primary" type="submit">
-            Submit
+            Login
           </Button>
-          <Button variant="primary">
-            <a
-              href={GOOGLE_AUTH_URL}
-              style={{ color: 'white', textDecoration: 'none' }}
-            >
-              Login with Google
+          <Button variant="primary" type="submit" style={{marginLeft: '15px'}}>
+            Sign Up
+          </Button>
+          <span style={{marginLeft: '15px'}}>
+            or Sign in with
+          </span>
+            <a href={GOOGLE_AUTH_URL} style={{ color: 'white', textDecoration: 'none' }}>
+              <img src={iconGoogle} alt="Sign in with google" style={{height:'40px' }}/>
             </a>
-          </Button>
         </Form>
       </Container>
     </div>
