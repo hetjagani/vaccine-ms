@@ -19,26 +19,24 @@ import com.cmpe275.vms.repository.DiseaseRepository;
 // left to add the authorization logic for diseases endpoint
 @RestController
 @RequestMapping(path = "/diseases")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class DiseaseController {
     
 	@Autowired
     private DiseaseRepository diseaseRepository;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<List<Disease>> getAllDiseases(){
         List<Disease> diseases = diseaseRepository.findAll();
         return ResponseEntity.ok(diseases);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<com.cmpe275.vms.model.Disease> getDiseaseById(@PathVariable Integer id){
     	return ResponseEntity.ok(diseaseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Disease", "id", id)));
     }
     
     @PostMapping
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<?> createDisease(@Valid @RequestBody DiseaseRequest disease){
     	Disease dbDisease = new Disease(disease.getName(), disease.getDescription());
     	Disease createdDisease = diseaseRepository.save(dbDisease);
@@ -46,7 +44,6 @@ public class DiseaseController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<com.cmpe275.vms.model.Disease> updateDisease(@PathVariable Integer id,@Valid @RequestBody DiseaseRequest disease){
     	Optional<Disease> optDisease = diseaseRepository.findById(id);
     	if(optDisease.isEmpty()) {
@@ -62,7 +59,6 @@ public class DiseaseController {
     }
     
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<?> deleteDisease(@PathVariable Integer id){
     	Optional<Disease> optDisease = diseaseRepository.findById(id);
     	if(optDisease.isEmpty()) {

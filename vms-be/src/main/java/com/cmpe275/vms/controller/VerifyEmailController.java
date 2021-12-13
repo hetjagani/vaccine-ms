@@ -33,10 +33,6 @@ public class VerifyEmailController {
 
     @GetMapping
     public ModelAndView verifyEmail(@RequestParam String email, @RequestParam String token) {
-        System.out.println(email);
-        System.out.println(token);
-        System.out.println(verifyRedirect);
-
         VerifyToken vt = new VerifyToken(email, token);
         Optional<VerifyToken> ot = verifyTokenRepository.findOne(Example.of(vt));
         if(ot.isEmpty()) {
