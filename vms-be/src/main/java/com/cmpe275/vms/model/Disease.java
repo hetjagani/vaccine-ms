@@ -26,8 +26,7 @@ public class Disease {
 
     public Disease() {}
 
-    public Disease(Integer id, String name, String description) {
-        this.id = id;
+    public Disease(String name, String description) {
         this.name = name;
         this.description = description;
     }
