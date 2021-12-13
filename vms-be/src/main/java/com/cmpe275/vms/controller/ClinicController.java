@@ -19,29 +19,26 @@ import com.cmpe275.vms.payload.ClinicRequest;
 import com.cmpe275.vms.repository.ClinicRepository;
 
 // left to add the authorization logic for diseases endpoint
-
 @RestController
 @RequestMapping(path = "/clinics")
+@PreAuthorize("hasAuthority('PATIENT') or hasAuthority('ADMIN')")
 public class ClinicController {
     
 	@Autowired
     private ClinicRepository clinicRepository;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<List<Clinic>> getAllClinics(){
         List<Clinic> clinics = clinicRepository.findAll();
         return ResponseEntity.ok(clinics);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<Clinic> getClinicById(@PathVariable Integer id){
     	return ResponseEntity.ok(clinicRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Clinic", "id", id)));
     }
     
     @PostMapping
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<?> createClinic(@Valid @RequestBody ClinicRequest clinic){
     	DateTimeFormatter dmf = DateTimeFormatter.ofPattern("HH:mm");
     	Clinic dbClinic = new Clinic(clinic.getName(), clinic.getAddress(), LocalTime.parse(clinic.getStartTime(),dmf), LocalTime.parse(clinic.getEndTime(),dmf), clinic.getNumberOfPhysicians());
@@ -50,7 +47,6 @@ public class ClinicController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<Clinic> updateClinic(@PathVariable Integer id,@Valid @RequestBody ClinicRequest clinic){
     	DateTimeFormatter dmf = DateTimeFormatter.ofPattern("HH:mm");
     	Optional<Clinic> optClinic = clinicRepository.findById(id);
@@ -70,7 +66,6 @@ public class ClinicController {
     }
     
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<?> deleteClinic(@PathVariable Integer id){
     	Optional<Clinic> optClinic = clinicRepository.findById(id);
     	if(optClinic.isEmpty()) {

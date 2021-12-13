@@ -16,7 +16,8 @@ public class Appointment {
     @DateTimeFormat(pattern = "HH-mm")
     private LocalTime time;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;      // INIT, CHECKIN, NOSHOW, CANCEL
 
     @ManyToMany
     @JoinTable(
@@ -39,7 +40,7 @@ public class Appointment {
 
     public Appointment() {}
 
-    public Appointment(Integer id, LocalTime time, String status) {
+    public Appointment(Integer id, LocalTime time, AppointmentStatus status) {
         this.id = id;
         this.time = time;
         this.status = status;
@@ -61,11 +62,11 @@ public class Appointment {
         this.time = time;
     }
 
-    public String getStatus() {
+    public AppointmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AppointmentStatus status) {
         this.status = status;
     }
 
