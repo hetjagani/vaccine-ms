@@ -1,14 +1,22 @@
 package com.cmpe275.vms.payload;
 
 import java.util.List;
-import java.util.Set;
+
+import javax.validation.constraints.NotBlank;
 
 public class VaccineRequest {
+	@NotBlank
 	private String name;
+	
+	@NotBlank
     private String manufacturer;
-    private Integer numOfShots;
-    private Integer shotInterval;       
-    private Integer duration; 
+    
+	@NotBlank
+	private Integer numOfShots;
+	private Integer shotInterval;       
+
+    @NotBlank
+	private Integer duration; 
     private List<Integer> diseaseIds;
 
 	public String getName() {
