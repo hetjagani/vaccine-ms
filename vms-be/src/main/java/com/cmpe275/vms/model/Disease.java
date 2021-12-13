@@ -3,7 +3,10 @@ package com.cmpe275.vms.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Disease {
@@ -15,19 +18,13 @@ public class Disease {
     private String name;
     private String description;
 
-    @ManyToMany
-    @JoinTable(
-            name = "disease_vaccine",
-            joinColumns = {@JoinColumn(name = "disease_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "vaccine_id", referencedColumnName = "id")}
-    )
+    @ManyToMany(mappedBy = "diseases")
     @JsonIgnoreProperties({"diseases"})
     private List<Vaccine> vaccines;
 
     public Disease() {}
 
-    public Disease(Integer id, String name, String description) {
-        this.id = id;
+    public Disease(String name, String description) {
         this.name = name;
         this.description = description;
     }

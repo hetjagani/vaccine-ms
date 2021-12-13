@@ -3,7 +3,10 @@ package com.cmpe275.vms.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Vaccine {
@@ -19,18 +22,22 @@ public class Vaccine {
     private Integer shotInterval;       // in days
     private Integer duration;           // # days vaccine is good for; -1 for lifetime
 
-    @ManyToMany(mappedBy = "vaccines")
+    @ManyToMany
+    @JoinTable(
+            name = "disease_vaccine",
+            joinColumns = {@JoinColumn(name = "vaccine_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "disease_id", referencedColumnName = "id")}
+    )
     @JsonIgnoreProperties({"vaccines"})
-    private List<com.cmpe275.vms.model.Disease> diseases;
+    private List<Disease> diseases ;
 
     @ManyToMany(mappedBy = "vaccines")
     @JsonIgnoreProperties({"vaccines"})
-    private List<com.cmpe275.vms.model.Appointment> appointments;
+    private Set<com.cmpe275.vms.model.Appointment> appointments;
 
     public Vaccine() {}
 
-    public Vaccine(Integer id, String name, String manufacturer, Integer numOfShots, Integer shotInterval, Integer duration) {
-        this.id = id;
+    public Vaccine(String name, String manufacturer, Integer numOfShots, Integer shotInterval, Integer duration) {
         this.name = name;
         this.manufacturer = manufacturer;
         this.numOfShots = numOfShots;
@@ -90,15 +97,15 @@ public class Vaccine {
         return diseases;
     }
 
-    public void setDiseases(List<com.cmpe275.vms.model.Disease> diseases) {
+    public void setDiseases(List<Disease> diseases) {
         this.diseases = diseases;
     }
 
-    public List<com.cmpe275.vms.model.Appointment> getAppointments() {
+    public Set<com.cmpe275.vms.model.Appointment> getAppointments() {
         return appointments;
     }
 
-    public void setAppointments(List<com.cmpe275.vms.model.Appointment> appointments) {
+    public void setAppointments(Set<com.cmpe275.vms.model.Appointment> appointments) {
         this.appointments = appointments;
     }
 }
