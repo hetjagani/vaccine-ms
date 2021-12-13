@@ -5,6 +5,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(BadCredentialsException.class)
     protected ResponseEntity handleBadCredentialsException(BadCredentialsException ex) {
         Error resp = new Error(HttpStatus.FORBIDDEN, ex.getMessage());
+        return new ResponseEntity<Error>(resp, resp.getStatus());
+    }
+
+    @ExceptionHandler(InternalAuthenticationServiceException.class)
+    protected ResponseEntity handleInternalAuthenticationServiceException(InternalAuthenticationServiceException ex) {
+        Error resp = new Error(HttpStatus.UNAUTHORIZED, ex.getMessage());
         return new ResponseEntity<Error>(resp, resp.getStatus());
     }
 }

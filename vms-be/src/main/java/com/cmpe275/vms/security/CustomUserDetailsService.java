@@ -5,6 +5,7 @@ import com.cmpe275.vms.model.User;
 import com.cmpe275.vms.exception.ResourceNotFoundException;
 import com.cmpe275.vms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +30,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<User> optUser = userRepository.findByEmail(email);
         if(optUser.isEmpty()) {
             throw new UsernameNotFoundException("username not found");
+        }
+        if(!optUser.get().getVerified()) {
+            throw new InternalAuthenticationServiceException("user not verified");
         }
         GrantedAuthority authority = new SimpleGrantedAuthority(optUser.get().getRole().toString());
         return new UserPrincipal(optUser.get().getMrn(), optUser.get().getEmail(), optUser.get().getPassword(), List.of(authority));
