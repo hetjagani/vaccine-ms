@@ -1,6 +1,7 @@
 package com.cmpe275.vms.controller;
 
 import com.cmpe275.vms.exception.UserAlreadyExistsException;
+import com.cmpe275.vms.model.Role;
 import com.cmpe275.vms.model.User;
 import com.cmpe275.vms.payload.*;
 import com.cmpe275.vms.repository.UserRepository;
@@ -65,11 +66,11 @@ public class AuthController {
 
         // TODO: if user has SJSU email then authority is ADMIN
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().toString()));
+        grantedAuthorities.add(new SimpleGrantedAuthority(Role.PATIENT.toString()));
 
         // created user in database
         User dbUser = new User(userRepository, user.getFirstName(), user.getMiddleName(), user.getLastName(), user.getEmail(),
-                user.getDateOfBirth(), user.getGender(), user.getAddress(), user.getRole());
+                user.getDateOfBirth(), user.getGender(), user.getAddress(), Role.PATIENT);
         dbUser.setPassword(passwordEncoder.encode(user.getPassword()));
         User createdUser = userRepository.save(dbUser);
 
@@ -80,28 +81,6 @@ public class AuthController {
         final String token = tokenProvider.createToken(auth);
 
         return ResponseEntity.ok(new AuthResponse(token));
-
-//        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
-//            throw new BadRequestException("Email address already in use.");
-//        }
-//
-//        // Creating user's account
-//        User user = new User();
-//        user.setName(signUpRequest.getName());
-//        user.setEmail(signUpRequest.getEmail());
-//        user.setPassword(signUpRequest.getPassword());
-//        user.setProvider(AuthProvider.local);
-//
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//
-//        User result = userRepository.save(user);
-//
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentContextPath().path("/user/me")
-//                .buildAndExpand(result.getId()).toUri();
-//
-//        return ResponseEntity.created(location)
-//                .body(new ApiResponse(true, "User registered successfully@"));
     }
 
 }

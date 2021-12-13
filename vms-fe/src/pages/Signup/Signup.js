@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { getCookie } from 'react-use-cookie';
 import { setCookie } from 'react-use-cookie';
 import Navigation from '../../components/Navigation';
+import { convertDate } from '../../util/date';
 
 function Signup() {
   const token = getCookie('auth');
@@ -25,16 +26,21 @@ function Signup() {
     e.preventDefault();
 
     const data = {
+      email,
+      password,
       firstName,
       lastName,
       middleName,
-      city,
-      stateName,
-      street,
-      zipcode,
-      dateOfBirth,
+      address: {
+        city,
+        state: stateName,
+        street,
+        zipcode,
+      },
+      dateOfBirth: convertDate(dateOfBirth),
       gender,
     };
+    console.log(data);
 
     axios
       .post(`/auth/signup`, data)
@@ -98,7 +104,7 @@ function Signup() {
                   type="text"
                   placeholder="Middle name"
                   onChange={(e) => setMiddleName(e.target.value)}
-                  value={middleName ? lastName : null}
+                  value={middleName ? middleName : null}
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
@@ -175,7 +181,7 @@ function Signup() {
                       label="Male"
                       name="formHorizontalRadios"
                       id="formHorizontalRadios1"
-                      value="Male"
+                      value="MALE"
                       onChange={(e) => setGender(e.target.value)}
                     />
                     <Form.Check
@@ -183,7 +189,7 @@ function Signup() {
                       label="Female"
                       name="formHorizontalRadios"
                       id="formHorizontalRadios2"
-                      value="Female"
+                      value="FEMALE"
                       onChange={(e) => setGender(e.target.value)}
                     />
                   </Col>

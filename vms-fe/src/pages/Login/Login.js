@@ -6,11 +6,14 @@ import axios from 'axios';
 import { setCookie } from 'react-use-cookie';
 import Navigation from '../../components/Navigation';
 import iconGoogle from '../../assets/images/icon-google.png';
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
   const OAUTH2_REDIRECT_URI = 'http://localhost:3000/oauth2/redirect';
   const GOOGLE_AUTH_URL =
     window.BACKEND_API_URL + '/oauth2/authorize/google?redirect_uri=' + OAUTH2_REDIRECT_URI;
+
+  const history = useHistory();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -36,6 +39,7 @@ const Login = () => {
     <div>
       <Navigation />
       <Container className={styles.main} fluid="sm">
+        <h2>Login Here,</h2>
         <Form onSubmit={submitForm}>
           <Form.Group className={styles.formGroup} controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
@@ -60,16 +64,16 @@ const Login = () => {
           <Button variant="primary" type="submit">
             Login
           </Button>
-          <Button variant="primary" type="submit" style={{marginLeft: '15px'}}>
+          <Button variant="primary" type="submit" style={{ marginLeft: '15px' }} onClick={() => history.push("/signup")}>
             Sign Up
           </Button>
-          <span style={{marginLeft: '15px'}}>
-            or Sign in with
-          </span>
-            <a href={GOOGLE_AUTH_URL} style={{ color: 'white', textDecoration: 'none' }}>
-              <img src={iconGoogle} alt="Sign in with google" style={{height:'40px' }}/>
-            </a>
         </Form>
+        <div style={{ margin: '50px', backgroundColor: '#3569bd', padding: '10px', borderRadius: '10px' }}>
+          <a href={GOOGLE_AUTH_URL} style={{ textDecoration: 'none', color: 'white'}}>
+            <span style={{ margin: '15px' }}>or Sign in with</span>
+            <img src={iconGoogle} alt="Sign in with google" style={{ height: '40px' }} />
+          </a>
+        </div>
       </Container>
     </div>
   );

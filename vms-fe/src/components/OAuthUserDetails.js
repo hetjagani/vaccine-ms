@@ -29,6 +29,8 @@ function OAuthUserDetails() {
     setValidated(true);
     
     const data = { firstName, lastName, middleName,city, stateName, street, zipcode, dateOfBirth, gender, validated  };
+
+    // update the user 
   };
 
   const getUserDetails = () => {
