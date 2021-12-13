@@ -2,6 +2,7 @@ data
 target/
 .idea
 application.yml
+*.iml
 
 # Java related
 target/**

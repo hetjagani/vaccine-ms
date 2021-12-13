@@ -1,10 +1,14 @@
 import './App.css';
 import Login from './pages/Login/Login';
+import Signup from './pages/Signup/Signup';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 import { getCookie } from 'react-use-cookie';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import OAuth2RedirectHandler from './components/OAuth2RedirectHandler';
+import OAuthUserDetails from './components/OAuthUserDetails';
+import CustomerDashboard from './components/CustomerDashboard';
+
 
 axios.defaults.baseURL = window.BACKEND_API_URL;
 axios.interceptors.request.use((req) => {
@@ -22,7 +26,10 @@ function App() {
       <BrowserRouter>
         <Switch>
           <Route path="/login" component={Login} />
+          <Route path="/signup" component={Signup}/>
           <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
+          <Route path="/oauth2/getdetails" component={OAuthUserDetails} />
+          <Route path="/dashboard" component={CustomerDashboard} />
         </Switch>
       </BrowserRouter>
     </div>
