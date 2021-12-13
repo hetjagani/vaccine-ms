@@ -13,6 +13,9 @@ public class Clinic {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(unique = true)
+    private String name;
+    
     @Embedded
     private Address address;
 
@@ -29,15 +32,23 @@ public class Clinic {
 
     public Clinic() {}
 
-    public Clinic(Integer id, Address address, LocalTime startTime, LocalTime endTime, Integer numberOfPhysicians) {
-        this.id = id;
-        this.address = address;
+    public Clinic(String name, Address address, LocalTime startTime, LocalTime endTime, Integer numberOfPhysicians) {
+        this.name = name;
+    	this.address = address;
         this.startTime = startTime;
         this.endTime = endTime;
         this.numberOfPhysicians = numberOfPhysicians;
     }
 
-    public Integer getId() {
+    public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getId() {
         return id;
     }
 
