@@ -1,5 +1,6 @@
 package com.cmpe275.vms.payload;
 
+import java.util.List;
 import java.util.Set;
 
 public class VaccineRequest {
@@ -8,7 +9,7 @@ public class VaccineRequest {
     private Integer numOfShots;
     private Integer shotInterval;       
     private Integer duration; 
-    private Set<Integer> diseaseIdList;
+    private List<Integer> diseaseIds;
 
 	public String getName() {
 		return name;
@@ -50,11 +51,11 @@ public class VaccineRequest {
 		this.duration = duration;
 	}
 
-	public Set<Integer> getDiseaseIdList() {
-		return diseaseIdList;
+	public List<Integer> getDiseaseIdList() {
+		return diseaseIds;
 	}
 
-	public void setDiseaseIdList(Set<Integer> diseaseIdList) {
-		this.diseaseIdList = diseaseIdList;
+	public void setDiseaseIdList(List<Integer> diseaseIdList) {
+		this.diseaseIds = diseaseIdList;
 	}
 }

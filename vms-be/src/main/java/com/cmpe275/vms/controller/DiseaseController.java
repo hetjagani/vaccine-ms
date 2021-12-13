@@ -1,5 +1,7 @@
 package com.cmpe275.vms.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -8,13 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.cmpe275.vms.exception.ResourceNotFoundException;
 import com.cmpe275.vms.model.Disease;
@@ -23,18 +19,26 @@ import com.cmpe275.vms.repository.DiseaseRepository;
 
 // left to add the authorization logic for diseases endpoint
 @RestController
+@RequestMapping(path = "/diseases")
 public class DiseaseController {
     
 	@Autowired
     private DiseaseRepository diseaseRepository;
-    
-    @GetMapping("/diseases/{id}")
+
+    @GetMapping
+    @PreAuthorize("hasAuthority('PATIENT')")
+    public ResponseEntity<List<Disease>> getAllDiseases(){
+        List<Disease> diseases = diseaseRepository.findAll();
+        return ResponseEntity.ok(diseases);
+    }
+
+    @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<com.cmpe275.vms.model.Disease> getDiseaseById(@PathVariable Integer id){
     	return ResponseEntity.ok(diseaseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Disease", "id", id)));
     }
     
-    @PostMapping("/diseases")
+    @PostMapping
     @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<?> createDisease(@Valid @RequestBody DiseaseRequest disease){
     	Disease dbDisease = new Disease(disease.getName(), disease.getDescription());
@@ -42,7 +46,7 @@ public class DiseaseController {
     	return new ResponseEntity<>(createdDisease, HttpStatus.CREATED);
     }
 
-    @PutMapping("/diseases/{id}")
+    @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<com.cmpe275.vms.model.Disease> updateDisease(@PathVariable Integer id,@Valid @RequestBody DiseaseRequest disease){
     	Optional<Disease> optDisease = diseaseRepository.findById(id);
@@ -58,7 +62,7 @@ public class DiseaseController {
     	return ResponseEntity.ok(updatedDisease);
     }
     
-    @DeleteMapping("/diseases/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<?> deleteDisease(@PathVariable Integer id){
     	Optional<Disease> optDisease = diseaseRepository.findById(id);

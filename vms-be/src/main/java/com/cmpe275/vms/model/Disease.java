@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,14 +18,9 @@ public class Disease {
     private String name;
     private String description;
 
-    @ManyToMany
-    @JoinTable(
-            name = "disease_vaccine",
-            joinColumns = {@JoinColumn(name = "disease_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "vaccine_id", referencedColumnName = "id")}
-    )
+    @ManyToMany(mappedBy = "diseases")
     @JsonIgnoreProperties({"diseases"})
-    private Set<com.cmpe275.vms.model.Vaccine> vaccines = new HashSet<com.cmpe275.vms.model.Vaccine>();
+    private List<Vaccine> vaccines;
 
     public Disease() {}
 
@@ -57,11 +53,11 @@ public class Disease {
         this.description = description;
     }
 
-    public Set<Vaccine> getVaccines() {
+    public List<Vaccine> getVaccines() {
         return vaccines;
     }
 
-    public void setVaccines(Set<com.cmpe275.vms.model.Vaccine> vaccines) {
+    public void setVaccines(List<Vaccine> vaccines) {
         this.vaccines = vaccines;
     }
 }
