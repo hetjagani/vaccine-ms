@@ -19,20 +19,19 @@ import javax.transaction.Transactional;
 
 @RestController
 @RequestMapping(path = "/users")
+@PreAuthorize("hasAuthority('PATIENT') or hasAuthority('ADMIN')")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
 
     @GetMapping("/me")
-    @PreAuthorize("hasAuthority('PATIENT') or hasAuthority('ADMIN')")
     public ResponseEntity<com.cmpe275.vms.model.User> getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
         return ResponseEntity.ok(userRepository.findByEmail(userPrincipal.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", userPrincipal.getUsername())));
     }
 
     @PutMapping("/me")
-    @PreAuthorize("hasAuthority('PATIENT') or hasAuthority('ADMIN')")
     @Transactional
     public ResponseEntity<com.cmpe275.vms.model.User> updateCurrentUser(@CurrentUser UserPrincipal userPrincipal, @RequestBody UserRequest user) {
         User loggedInUser = userRepository.findByEmail(userPrincipal.getUsername()).orElseThrow(() -> new ResourceNotFoundException("User", "email", userPrincipal.getUsername()));

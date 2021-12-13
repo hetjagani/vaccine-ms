@@ -21,7 +21,7 @@ import com.cmpe275.vms.repository.ClinicRepository;
 // left to add the authorization logic for diseases endpoint
 @RestController
 @RequestMapping(path = "/clinics")
-@PreAuthorize("hasAuthority('PATIENT') or hasAuthority('ADMIN')")
+@PreAuthorize("hasAuthority('ADMIN')")
 public class ClinicController {
     
 	@Autowired
