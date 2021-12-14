@@ -55,10 +55,9 @@ function OAuthUserDetails() {
       })
       .then((res) => {
         if (res && res.data) {
-          // if (res.data.gender) {
-          //   history.push('/dashboard');
-          // }
-          console.log(res.data);
+          if (res.data.gender) {
+            history.push('/dashboard');
+          }
           if (res.data.firstName) {
             setFirstName(res.data.firstName);
           }
