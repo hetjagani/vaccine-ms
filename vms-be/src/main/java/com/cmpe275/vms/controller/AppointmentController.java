@@ -1,5 +1,6 @@
 package com.cmpe275.vms.controller;
 
+import com.cmpe275.vms.exception.BadRequestException;
 import com.cmpe275.vms.exception.ResourceNotFoundException;
 import com.cmpe275.vms.model.*;
 import com.cmpe275.vms.payload.AppointmentRequest;
@@ -75,6 +76,19 @@ public class AppointmentController {
             throw new SecurityException("cannot create other user's appointment");
         }
 
+        // just check whether the number of vaccines are less than 4 or not for right now logic
+        if(request.getVaccineIds().size() > 4) {
+        	throw new BadRequestException("Can't have more than four vaccines in single appointment");
+        }
+        
+        // check whether the appointment is within the 12 months from current time or not
+        LocalDate dateC = request.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateF = LocalDate.now().plusMonths(12);
+        
+        if(dateC.isAfter(dateF)) {
+        	throw new BadRequestException("Can't opt for appointments date after 12 months");
+        }
+        
         List<Vaccine> vaccineList = vaccineRepository.findAllById(request.getVaccineIds());
 
         Clinic clinic = clinicRepository.findById(request.getClinicId()).orElseThrow(() -> new ResourceNotFoundException("clinic", "id", request.getClinicId()));
