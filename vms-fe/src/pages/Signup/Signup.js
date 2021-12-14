@@ -41,17 +41,17 @@ function Signup() {
       gender,
     };
     console.log(data);
-
+    
     axios
       .post(`/auth/signup`, data)
       .then((res) => {
         const token = res?.data?.token;
-
         if (token) {
           setCookie('auth', token);
         }
       })
       .catch((err) => {
+        history.push('/userVerification');
         console.error(err);
       });
   };

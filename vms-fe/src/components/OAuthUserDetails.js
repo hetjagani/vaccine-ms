@@ -20,6 +20,7 @@ function OAuthUserDetails() {
   const [validated, setValidated] = useState(false);
 
   const handleSubmit = (event) => {
+    event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -27,9 +28,21 @@ function OAuthUserDetails() {
     }
     
     setValidated(true);
+    const address = {'street': street,'city': city,'state': stateName,'zipcode':zipcode}
+    const data = { firstName, lastName, middleName,address, dateOfBirth, gender, validated  };
+    console.log("update Data", data);
     
-    const data = { firstName, lastName, middleName,city, stateName, street, zipcode, dateOfBirth, gender, validated  };
-
+    axios
+      .put(`users/me`, data,{
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        console.log(res);
+       console.log("Updated!!!")
+      });
+    
     // update the user 
   };
 
@@ -42,15 +55,36 @@ function OAuthUserDetails() {
       })
       .then((res) => {
         if (res && res.data) {
-          if (res.data.gender) {
-            history.push('/dashboard');
-          }
+          // if (res.data.gender) {
+          //   history.push('/dashboard');
+          // }
+          console.log(res.data);
           if (res.data.firstName) {
             setFirstName(res.data.firstName);
           }
           if (res.data.lastName) {
             setLastName(res.data.lastName);
           }
+          if (res.data.middleName) {
+            setMiddleName(res.data.middleName);
+          }
+          if (res.data?.address?.city) {
+            setCity(res.data.address?.city);
+          }
+          if (res.data?.address?.state) {
+            setStateName(res.data.address?.state);
+          }
+          if (res.data?.address?.street) {
+            setStreet(res.data.address?.street);
+          }
+          if (res.data?.address?.zipcode) {
+            setZipcode(res.data?.address?.zipcode);
+          }
+          if (res.data.gender) {
+            setGender(res.data.gender);
+          }
+          
+         
         }
       });
   };
@@ -61,7 +95,6 @@ function OAuthUserDetails() {
     getUserDetails();
   }, []);
 
-  console.log(firstName)
   return (
     <div>
     <Navigation />
@@ -116,6 +149,8 @@ function OAuthUserDetails() {
                 placeholder="Street"
                 required
                 onChange={(e) => setStreet(e.target.value)}
+                value={street ? street : null}
+
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid city.
@@ -130,6 +165,8 @@ function OAuthUserDetails() {
                 placeholder="City"
                 required
                 onChange={(e) => setCity(e.target.value)}
+                value={city ? city : null}
+
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid city.
@@ -144,6 +181,8 @@ function OAuthUserDetails() {
                 placeholder="State"
                 required
                 onChange={(e) => setStateName(e.target.value)}
+                value={stateName ? stateName : null}
+
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid state.
@@ -158,6 +197,8 @@ function OAuthUserDetails() {
                 placeholder="Zip"
                 required
                 onChange={(e) => setZipcode(e.target.value)}
+                value={zipcode ? zipcode : null}
+
               />
               <Form.Control.Feedback type="invalid">
                 Please provide a valid zip.
