@@ -35,9 +35,15 @@ public class AppointmentController {
     private UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<List<Appointment>> getAllAppointments() {
-        List<Appointment> appointments = appointmentRepository.findAll();
-
+    public ResponseEntity<List<Appointment>> getAllAppointments(@RequestParam(required = false) Boolean past) {
+        List<Appointment> appointments = null;
+        
+        if(past) {
+        	appointments = appointmentRepository.findAll();
+        }else {
+//        	appointments = appointmentRepository.find
+        }
+        
         return ResponseEntity.ok(appointments);
     }
 
@@ -71,7 +77,7 @@ public class AppointmentController {
         appointment.setClinic(clinic);
         appointment.setUser(user);
         appointment.setVaccines(vaccineList);
-
+        appointment.setAppDate(request.getAppDate());
 
         Appointment createdAppointment = appointmentRepository.save(appointment);
 
@@ -92,6 +98,7 @@ public class AppointmentController {
 
         dbAppointment.setTime(request.getTime());
         dbAppointment.setStatus(request.getStatus());
+        dbAppointment.setAppDate(request.getAppDate());
         dbAppointment.setVaccines(vaccineList);
 
         Appointment updatedAppointment = appointmentRepository.save(dbAppointment);

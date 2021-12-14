@@ -11,12 +11,10 @@ public class VaccineRequest {
 	@NotBlank
     private String manufacturer;
     
-	@NotBlank
 	private Integer numOfShots;
 	private Integer shotInterval;       
-
-    @NotBlank
 	private Integer duration; 
+	
     private List<Integer> diseaseIds;
 
 	public String getName() {
@@ -59,11 +57,12 @@ public class VaccineRequest {
 		this.duration = duration;
 	}
 
-	public List<Integer> getDiseaseIdList() {
+	public List<Integer> getDiseaseIds() {
 		return diseaseIds;
 	}
 
-	public void setDiseaseIdList(List<Integer> diseaseIdList) {
-		this.diseaseIds = diseaseIdList;
+	public void setDiseaseIds(List<Integer> diseaseIds) {
+		this.diseaseIds = diseaseIds;
 	}
+
 }
