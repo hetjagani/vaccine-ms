@@ -3,6 +3,7 @@ package com.cmpe275.vms.payload;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 public class VaccineRequest {
 	@NotBlank
@@ -10,13 +11,11 @@ public class VaccineRequest {
 	
 	@NotBlank
     private String manufacturer;
-    
-	@NotBlank
+
 	private Integer numOfShots;
 	private Integer shotInterval;       
 
-    @NotBlank
-	private Integer duration; 
+	private Integer duration;
     private List<Integer> diseaseIds;
 
 	public String getName() {
@@ -59,11 +58,11 @@ public class VaccineRequest {
 		this.duration = duration;
 	}
 
-	public List<Integer> getDiseaseIdList() {
+	public List<Integer> getDiseaseIds() {
 		return diseaseIds;
 	}
 
-	public void setDiseaseIdList(List<Integer> diseaseIdList) {
+	public void setDiseaseIds(List<Integer> diseaseIdList) {
 		this.diseaseIds = diseaseIdList;
 	}
 }
