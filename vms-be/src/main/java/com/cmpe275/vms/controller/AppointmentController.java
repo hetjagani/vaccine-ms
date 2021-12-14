@@ -8,12 +8,17 @@ import com.cmpe275.vms.repository.ClinicRepository;
 import com.cmpe275.vms.repository.UserRepository;
 import com.cmpe275.vms.repository.VaccineRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -34,9 +39,19 @@ public class AppointmentController {
     private UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<List<Appointment>> getAllAppointments() {
-        List<Appointment> appointments = appointmentRepository.findAll();
-
+    public ResponseEntity<List<Appointment>> getAllAppointments(@RequestParam(required=false) String past, @RequestParam(required=false) @DateTimeFormat(pattern="MM-dd-yyyy") Date date) {
+        List<Appointment> appointments = new ArrayList<Appointment>();
+        if(date!=null) {
+            LocalDate ld = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            java.sql.Date sqlD1 = new java.sql.Date(Date.from(ld.plusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
+            java.sql.Date sqlD2 = new java.sql.Date(Date.from(ld.plusMonths(24).atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
+            appointments = appointmentRepository.findNext12MonthsAppointments(sqlD1.toString(),sqlD2.toString());
+        	
+        }else if(date==null && (past=="false" || past==null)) {
+        	appointments = appointmentRepository.findAllFutureAppointments();
+        }else {
+        	appointments = appointmentRepository.findAllPastAppointments();
+        }
         return ResponseEntity.ok(appointments);
     }
 
