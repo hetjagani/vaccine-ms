@@ -1,14 +1,20 @@
 package com.cmpe275.vms.payload;
 
 import com.cmpe275.vms.model.AppointmentStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 public class AppointmentRequest {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time;     // time in interval of 15 minutes
+
+    @JsonFormat(pattern="MM-dd-yyyy")
+    private Date date;
+
     private List<Integer> vaccineIds; // atmost 4 vaccines
     private Integer clinicId;
     private String userId;
@@ -59,6 +65,14 @@ public class AppointmentRequest {
 
     public void setStatus(AppointmentStatus status) {
         this.status = status;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     @Override

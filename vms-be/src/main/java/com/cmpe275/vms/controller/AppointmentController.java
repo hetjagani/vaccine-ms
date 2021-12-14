@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/appointments")
@@ -48,6 +47,8 @@ public class AppointmentController {
         return ResponseEntity.ok(appointment);
     }
 
+    // TODO: 15 minute intervals only accepted
+    // TODO: send email for the appointment
     @PostMapping
     public ResponseEntity<Appointment> createAppointment(Principal principal, @RequestBody AppointmentRequest request) {
         String loggedInEmail = principal.getName();
@@ -71,13 +72,15 @@ public class AppointmentController {
         appointment.setClinic(clinic);
         appointment.setUser(user);
         appointment.setVaccines(vaccineList);
-
+        appointment.setDate(request.getDate());
 
         Appointment createdAppointment = appointmentRepository.save(appointment);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
 
+    // TODO: 15 minute intervals only accepted
+    // TODO: send email for the appointment
     @PutMapping("/{id}")
     public ResponseEntity<Appointment> updateAppointment(Principal principal, @PathVariable Integer id, @RequestBody AppointmentRequest request) {
         String loggedInEmail = principal.getName();

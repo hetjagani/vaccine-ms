@@ -1,10 +1,12 @@
 package com.cmpe275.vms.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,6 +17,9 @@ public class Appointment {
 
     @DateTimeFormat(pattern = "HH-mm")
     private LocalTime time;
+
+    @JsonFormat(pattern="MM-dd-yyyy")
+    private Date date;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;      // INIT, CHECKIN, NOSHOW, CANCEL
@@ -92,5 +97,13 @@ public class Appointment {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

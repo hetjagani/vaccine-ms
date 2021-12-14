@@ -1,6 +1,7 @@
 package com.cmpe275.vms.model;
 
 import com.cmpe275.vms.repository.UserRepository;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sun.istack.NotNull;
@@ -25,7 +26,7 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @DateTimeFormat(pattern="dd-MM-yyyy")
+    @JsonFormat(pattern="MM-dd-yyyy")
     private Date dateOfBirth;
 
     @Enumerated(EnumType.STRING)
