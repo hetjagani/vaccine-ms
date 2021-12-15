@@ -32,7 +32,7 @@ public class Vaccine {
 
     @ManyToMany(mappedBy = "vaccines")
     @JsonIgnoreProperties({"vaccines"})
-    private Set<com.cmpe275.vms.model.Appointment> appointments;
+    private Set<Appointment> appointments;
 
     public Vaccine() {}
 

@@ -21,6 +21,7 @@ import com.cmpe275.vms.repository.VaccineRepository;
 // left to add the authorization logic for vaccines endpoint
 @RestController
 @RequestMapping(path = "/vaccines")
+@PreAuthorize("hasAuthority('PATIENT') or hasAuthority('ADMIN')")
 public class VaccineController {
     
 	@Autowired
@@ -30,23 +31,20 @@ public class VaccineController {
 	private DiseaseRepository diseaseRepository;
 
 	@GetMapping
-	@PreAuthorize("hasAuthority('PATIENT')")
 	public ResponseEntity<List<Vaccine>> getAllVaccines(){
 		List<Vaccine> vaccineList = vaccineRepository.findAll();
 		return ResponseEntity.ok(vaccineList);
 	}
 
 	@GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<com.cmpe275.vms.model.Vaccine> getVaccineById(@PathVariable Integer id){
     	return ResponseEntity.ok(vaccineRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Vaccine", "id", id)));
     }
     
     @PostMapping
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<?> createVaccine(@Valid @RequestBody VaccineRequest vaccine){
     	Vaccine dbVaccine = new Vaccine(vaccine.getName(),vaccine.getManufacturer(),vaccine.getNumOfShots(),vaccine.getShotInterval(),vaccine.getDuration() );
-    	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIdList());
+    	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIds());
     	
 
     	dbVaccine.setDiseases(diseaseList);
@@ -56,7 +54,6 @@ public class VaccineController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<com.cmpe275.vms.model.Vaccine> updateVaccine(@PathVariable Integer id,@Valid @RequestBody VaccineRequest vaccine){
     	Optional<Vaccine> optVaccine = vaccineRepository.findById(id);
     	if(optVaccine.isEmpty()) {
@@ -69,7 +66,7 @@ public class VaccineController {
     	existVaccine.setNumOfShots(vaccine.getNumOfShots());
     	existVaccine.setShotInterval(vaccine.getShotInterval());
     	
-    	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIdList());
+    	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIds());
     	existVaccine.setDiseases(diseaseList);
 
     	Vaccine updatedVaccine = vaccineRepository.save(existVaccine);
@@ -78,7 +75,6 @@ public class VaccineController {
     }
     
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('PATIENT')")
     public ResponseEntity<?> deleteVaccine(@PathVariable Integer id){
     	Optional<Vaccine> optVaccine = vaccineRepository.findById(id);
     	if(optVaccine.isEmpty()) {

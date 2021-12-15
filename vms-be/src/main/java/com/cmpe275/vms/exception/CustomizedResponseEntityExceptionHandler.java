@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
 import java.util.NoSuchElementException;
 
 @ControllerAdvice
@@ -38,6 +39,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
         return new ResponseEntity<Error>(resp, resp.getStatus());
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    protected ResponseEntity handleResourceNotFoundException(ResourceNotFoundException ex) {
+        Error resp = new Error(HttpStatus.NOT_FOUND, ex.getMessage());
+        return new ResponseEntity<Error>(resp, resp.getStatus());
+    }
+
     @ExceptionHandler(UserAlreadyExistsException.class)
     protected ResponseEntity handleUserAlreadyExistException(UserAlreadyExistsException ex) {
         Error resp = new Error(HttpStatus.CONFLICT, ex.getMessage());
@@ -52,6 +59,12 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler(InternalAuthenticationServiceException.class)
     protected ResponseEntity handleInternalAuthenticationServiceException(InternalAuthenticationServiceException ex) {
+        Error resp = new Error(HttpStatus.UNAUTHORIZED, ex.getMessage());
+        return new ResponseEntity<Error>(resp, resp.getStatus());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    protected ResponseEntity handleAccessDeniedException(AccessDeniedException ex) {
         Error resp = new Error(HttpStatus.UNAUTHORIZED, ex.getMessage());
         return new ResponseEntity<Error>(resp, resp.getStatus());
     }
