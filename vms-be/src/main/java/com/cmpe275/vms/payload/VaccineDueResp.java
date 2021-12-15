@@ -1,6 +1,7 @@
 package com.cmpe275.vms.payload;
 
 public class VaccineDueResp {
+	private Integer id;
     private String name;
     private String manufacturer;
     private Integer numOfShots;
@@ -8,14 +9,23 @@ public class VaccineDueResp {
     private Integer duration;           // # days vaccine is good for; -1 for lifetime
     private Integer shotNumber;
     
-	public VaccineDueResp(String name, String manufacturer, Integer numOfShots, Integer shotInterval, Integer duration,
+	public VaccineDueResp(Integer id,String name, String manufacturer, Integer numOfShots, Integer shotInterval, Integer duration,
 			Integer shotNumber) {
+		this.id = id;
 		this.name = name;
 		this.manufacturer = manufacturer;
 		this.numOfShots = numOfShots;
 		this.shotInterval = shotInterval;
 		this.duration = duration;
 		this.shotNumber = shotNumber;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getName() {

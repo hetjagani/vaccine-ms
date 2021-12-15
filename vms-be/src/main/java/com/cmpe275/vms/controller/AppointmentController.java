@@ -69,7 +69,6 @@ public class AppointmentController {
         for(Object[] asp: dbExistAppointments) {
         	map.put(asp[0].toString().substring(0, 5), Integer.parseInt(asp[1].toString()));
         }
-        
         List<AppointmentSlotsResp> allSlots = new ArrayList<AppointmentSlotsResp>();
         DateTimeFormatter dmf = DateTimeFormatter.ofPattern("HH:mm");
         for(LocalTime lt: timeSlots) {
@@ -89,10 +88,10 @@ public class AppointmentController {
     @GetMapping
     public ResponseEntity<List<Appointment>> getAllAppointments(@CurrentUser UserPrincipal userPrincipal, @RequestParam(required=false) String past, @RequestParam(required=false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date) {
         System.out.println(date);
-        Optional<User> optUser = userRepository.findByEmail(userPrincipal.getEmail());
+        Optional<User> optUser = userRepository.findByEmail(userPrincipal.getUsername());
         
         if(optUser.isEmpty()) {
-        	throw new ResourceNotFoundException("User with Email:", userPrincipal.getName(), "not found");
+        	throw new ResourceNotFoundException("User with Email:", userPrincipal.getUsername(), "not found");
         }
         
         User user = optUser.get();

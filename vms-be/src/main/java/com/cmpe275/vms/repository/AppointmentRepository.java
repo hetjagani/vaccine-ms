@@ -23,4 +23,7 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 	
 	@Query(value="SELECT vaccine_id as id, COUNT(*) as num_of_shots FROM appointment JOIN appointment_vaccine ON appointment.id = appointment_vaccine.appointment_id where user_id=?1 AND status='CHECKIN' GROUP BY vaccine_id;", nativeQuery=true)
 	List<Object[]> findUserVaccineShotsTaken(String userId);
+	
+	@Query(value="SELECT vaccine_id as id, COUNT(*) as num_of_shots FROM appointment JOIN appointment_vaccine ON appointment.id = appointment_vaccine.appointment_id where user_id=?1 AND status!='NOSHOW' AND (date<?2 OR (time<?3 AND date=?2)) GROUP BY vaccine_id;",nativeQuery=true)
+	List<Object[]> findUserVaccineFromGivenTime(String userId, String currentDate, String currentTime);
 }
