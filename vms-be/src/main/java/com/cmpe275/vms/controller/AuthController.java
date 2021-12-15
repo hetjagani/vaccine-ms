@@ -1,6 +1,7 @@
 package com.cmpe275.vms.controller;
 
 import com.cmpe275.vms.exception.UserAlreadyExistsException;
+import com.cmpe275.vms.model.AuthProvider;
 import com.cmpe275.vms.model.Role;
 import com.cmpe275.vms.model.User;
 import com.cmpe275.vms.model.VerifyToken;
@@ -86,6 +87,7 @@ public class AuthController {
         // created user in database
         User dbUser = new User(userRepository, user.getFirstName(), user.getMiddleName(), user.getLastName(), user.getEmail(), user.getDateOfBirth(), user.getGender(), user.getAddress(), role);
         dbUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        dbUser.setProvider(AuthProvider.local);
         User createdUser = userRepository.save(dbUser);
 
         // create VerifyToken entity
