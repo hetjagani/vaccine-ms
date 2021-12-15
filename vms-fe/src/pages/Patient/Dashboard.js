@@ -19,11 +19,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 import MultiSelect from 'multiselect-react-dropdown';
 
 import './Dashboard.css';
+import toast from 'react-hot-toast';
+import UpdateAppointmentModal from './UpdateAppointmentModal';
 
 const Dashboard = () => {
   const [appointments, setAppointments] = useState([]);
   const [selectedButton, setSelectedButton] = useState(1);
   const [showAppointmentDetails, setShowAppointmentDetails] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   const [selectedClinic, setSelectedClinic] = useState('Select a clinic');
@@ -31,7 +34,7 @@ const Dashboard = () => {
   const [clinics, setClinics] = useState([]);
   const [selectedClinicID, setSelectedClinicID] = useState('');
   const [availableSlots, setAvailableSlots] = useState([]);
-  const [selectedSlot, setSelectedSlot] = useState();
+  const [selectedSlot, setSelectedSlot] = useState(null);
 
   const [vaccinesDue, setVaccinesDue] = useState([]);
   const [selectedVaccineOptions, setSelectedVaccineOptions] = useState([]);
@@ -64,9 +67,7 @@ const Dashboard = () => {
       axios
         .get('/vaccines/due', {
           params: {
-            date: `${currentDateTime.getFullYear()}-${
-              currentDateTime.getMonth() + 1
-            }-${currentDateTime.getDate()}`,
+            date: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
           },
         })
         .then((res) => {
@@ -75,7 +76,7 @@ const Dashboard = () => {
             res.data.map((vaccine) => {
               const tempObj = {
                 id: vaccine.id,
-                name: vaccine.name,
+                name: `${vaccine.name} (shot ${vaccine.shotNumber} of ${vaccine.numOfShots})`,
               };
               tempArr.push(tempObj);
             });
@@ -105,6 +106,10 @@ const Dashboard = () => {
   };
 
   const createAppointment = async () => {
+    if (!selectedSlot) {
+      toast.error('Please select a time slot!');
+      return;
+    }
     const vaccineIds = [];
     for (var i = 0; i < selectedVaccineOptions.length; i++) {
       vaccineIds.push(selectedVaccineOptions[i].id);
@@ -128,13 +133,19 @@ const Dashboard = () => {
   };
 
   const getAvailableSlots = () => {
+    if (selectedClinic === 'Select a clinic') {
+      toast.error('Please select a clinic!');
+      return;
+    }
+    if (vaccinesDue.length === 0) {
+      toast.success('No vaccines due!');
+      return;
+    }
     axios
       .get('/appointments/slots', {
         params: {
           clinicId: selectedClinicID,
-          date: `${currentDateTime.getFullYear()}-${
-            currentDateTime.getMonth() + 1
-          }-${currentDateTime.getDate()}`,
+          date: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
         },
       })
       .then((res) => {
@@ -215,6 +226,7 @@ const Dashboard = () => {
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <p>Date: {selectedAppointment ? selectedAppointment.date : ''}</p>
             <p>Time: {selectedAppointment ? selectedAppointment.time : ''}</p>
+            <p>Status: {selectedAppointment ? selectedAppointment.status : ''}</p>
             <Table responsive>
               <thead>
                 <tr style={{ textAlign: 'center' }}>
@@ -233,7 +245,7 @@ const Dashboard = () => {
                         <td>{vaccine.name}</td>
                         <td>{vaccine.manufacturer}</td>
                         <td>{vaccine.numOfShots}</td>
-                        <td>{vaccine.shotInterval}</td>
+                        <td>{`${vaccine.shotInterval} days`}</td>
                       </tr>
                     ))
                   : null}
@@ -247,16 +259,28 @@ const Dashboard = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+      {selectedAppointment ? (
+        <UpdateAppointmentModal
+          selectedAppointment={selectedAppointment}
+          showUpdateModal={showUpdateModal}
+          setShowUpdateModal={setShowUpdateModal}
+        />
+      ) : null}
       <div>
         <PatientNavbar />
         <div style={{ width: '100%' }}>
-          <Row style={{ marginTop: '50px' }}>
+          <Row style={{ marginTop: '50px', marginBottom: '20px' }}>
             <Col>
               <Button
                 style={{ width: '250px' }}
                 onClick={() => {
                   setSelectedButton(1);
                   getFutureAppointments();
+
+                  setSelectedSlot(null);
+                  setAvailableSlots([]);
+                  setSelectedVaccineOptions([]);
+                  setSelectedClinic('Select a clinic');
                 }}
               >
                 {' '}
@@ -268,6 +292,7 @@ const Dashboard = () => {
                 style={{ width: '250px' }}
                 onClick={() => {
                   setSelectedButton(2);
+                  setSelectedSlot(null);
                   getVaccinesDue();
                   setAvailableSlots([]);
                   setSelectedVaccineOptions([]);
@@ -284,6 +309,11 @@ const Dashboard = () => {
                 onClick={() => {
                   setSelectedButton(3);
                   getPastAppointments();
+
+                  setSelectedSlot(null);
+                  setAvailableSlots([]);
+                  setSelectedVaccineOptions([]);
+                  setSelectedClinic('Select a clinic');
                 }}
               >
                 {' '}
@@ -295,6 +325,7 @@ const Dashboard = () => {
             <Col>
               {selectedButton === 1 ? (
                 <>
+                  <hr />
                   <h2 style={{ marginTop: '20px' }}>Future Appointments</h2>
                   <div
                     style={{
@@ -356,7 +387,14 @@ const Dashboard = () => {
                                 </div>
                               </div>
 
-                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flexDirection: 'column',
+                                  alignItems: 'center',
+                                  justifyContent: 'space-around',
+                                }}
+                              >
                                 <Button
                                   style={{ width: '250px' }}
                                   onClick={() => {
@@ -365,6 +403,16 @@ const Dashboard = () => {
                                   }}
                                 >
                                   View details
+                                </Button>
+                                <Button
+                                  variant="success"
+                                  style={{ width: '250px' }}
+                                  onClick={() => {
+                                    setSelectedAppointment(app);
+                                    setShowUpdateModal(true);
+                                  }}
+                                >
+                                  Update Appointment
                                 </Button>
                               </div>
                             </div>
@@ -378,7 +426,9 @@ const Dashboard = () => {
                 <>
                   <hr />
                   <h2 style={{ marginTop: '20px' }}>Book an appointment</h2>
-                  <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                  <div
+                    style={{ display: 'flex', justifyContent: 'space-around', marginTop: '30px' }}
+                  >
                     <div>
                       <DatePicker
                         selected={startDate}
@@ -471,6 +521,7 @@ const Dashboard = () => {
                 </>
               ) : (
                 <>
+                  <hr />
                   <h2 style={{ marginTop: '20px' }}>Past Appointments</h2>
                   <div
                     style={{

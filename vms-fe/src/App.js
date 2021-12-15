@@ -12,6 +12,7 @@ import Disease from './pages/Admin/Disease';
 import Clinic from './pages/Admin/Clinic';
 import Vaccine from './pages/Admin/Vaccine';
 import Dashboard from './pages/Patient/Dashboard';
+import { Toaster } from 'react-hot-toast';
 
 axios.defaults.baseURL = window.BACKEND_API_URL;
 axios.interceptors.request.use((req) => {
@@ -27,6 +28,7 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <Toaster position="top-center" reverseOrder={false} />
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
