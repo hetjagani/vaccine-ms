@@ -206,6 +206,7 @@ export default function Vaccine() {
             <Form.Control
               required
               type="Number"
+              type="text"
               placeholder=""
               value={duration}
               onChange={(e) => setDuration(e.target.value)}

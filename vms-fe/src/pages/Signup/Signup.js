@@ -41,17 +41,17 @@ function Signup() {
       gender,
     };
     console.log(data);
-
+    
     axios
       .post(`/auth/signup`, data)
       .then((res) => {
         const token = res?.data?.token;
-
         if (token) {
           setCookie('auth', token);
         }
       })
       .catch((err) => {
+        history.push('/userVerification');
         console.error(err);
       });
   };
@@ -59,12 +59,12 @@ function Signup() {
   return (
     <div>
       <Navigation />
-      <Container>
+      <Container style={{width:'50%'}}>
         Please provide Your Details
-        <div style={{ margin: '20px' }}>
+        <div style={{ margin: '20px',textAlign:'left' }}>
           <Form onSubmit={handleSubmit}>
             <Row className="mb-3">
-              <Form.Group as={Col} md="4" controlId="validationCustom02">
+              <Form.Group controlId="validationCustom02">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                   required
@@ -74,7 +74,7 @@ function Signup() {
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustom02">
+              <Form.Group controlId="validationCustom02">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   required
@@ -86,8 +86,8 @@ function Signup() {
               </Form.Group>
             </Row>
             <Row className="mb-3">
-              <Form.Group as={Col} md="4" controlId="validationCustom01">
-                <Form.Label>First name</Form.Label>
+              <Form.Group controlId="validationCustom01">
+                <Form.Label style={{textAlign:'left'}}>First name</Form.Label>
                 <Form.Control
                   required
                   type="text"
@@ -97,7 +97,9 @@ function Signup() {
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustom02">
+              </Row>
+              <Row className="mb-3">
+              <Form.Group controlId="validationCustom02">
                 <Form.Label>Middle name</Form.Label>
                 <Form.Control
                   required
@@ -108,7 +110,9 @@ function Signup() {
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="4" controlId="validationCustom02">
+              </Row>
+              <Row className="mb-3">
+              <Form.Group controlId="validationCustom02">
                 <Form.Label>Last name</Form.Label>
                 <Form.Control
                   required
@@ -119,9 +123,9 @@ function Signup() {
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-            </Row>
+              </Row>
             <Row className="mb-3">
-              <Form.Group as={Col} md="3" controlId="validationCustom03">
+              <Form.Group controlId="validationCustom03">
                 <Form.Label>Street</Form.Label>
                 <Form.Control
                   type="text"
@@ -133,7 +137,9 @@ function Signup() {
                   Please provide a valid city.
                 </Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="3" controlId="validationCustom03">
+              </Row>
+              <Row className="mb-3">
+              <Form.Group controlId="validationCustom03">
                 <Form.Label>City</Form.Label>
                 <Form.Control
                   type="text"
@@ -145,7 +151,9 @@ function Signup() {
                   Please provide a valid city.
                 </Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="3" controlId="validationCustom04">
+              </Row>
+              <Row className="mb-3">
+              <Form.Group controlId="validationCustom04">
                 <Form.Label>State</Form.Label>
                 <Form.Control
                   type="text"
@@ -157,7 +165,9 @@ function Signup() {
                   Please provide a valid state.
                 </Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="3" controlId="validationCustom05">
+              </Row>
+              <Row className="mb-3">
+              <Form.Group controlId="validationCustom05">
                 <Form.Label>Zipcode</Form.Label>
                 <Form.Control
                   type="text"
@@ -195,8 +205,11 @@ function Signup() {
                   </Col>
                 </Form.Group>
               </fieldset>
+              </Row>
 
-              <Col sm={7}>
+              <Row className="mb-3">
+              <Form.Group controlId="validationCustom05">
+
                 <Form.Label>Date Of Birth:</Form.Label>
                 <Form.Control
                   type="date"
@@ -204,9 +217,13 @@ function Signup() {
                   required
                   onChange={(e) => setDateOfBirth(e.target.value)}
                 />
-              </Col>
-            </Row>
-            <Button type="submit">Sign Up</Button>
+                </Form.Group>
+                </Row>
+                <Row className="mb-3">
+                  <div style={{textAlign:'center'}} >
+                    <Button type="submit">Sign Up</Button>
+                  </div>
+                </Row>
           </Form>
         </div>
       </Container>
