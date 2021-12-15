@@ -1,0 +1,9 @@
+.modalWidth {
+    width: 90vw;
+    max-width: 90vw;
+}
+
+.selectedCard {
+    border: 2px solid black;
+    background-color: rgb(199, 248, 125);
+}
