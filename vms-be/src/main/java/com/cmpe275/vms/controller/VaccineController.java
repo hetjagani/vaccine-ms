@@ -44,7 +44,7 @@ public class VaccineController {
     @PostMapping
     public ResponseEntity<?> createVaccine(@Valid @RequestBody VaccineRequest vaccine){
     	Vaccine dbVaccine = new Vaccine(vaccine.getName(),vaccine.getManufacturer(),vaccine.getNumOfShots(),vaccine.getShotInterval(),vaccine.getDuration() );
-    	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIdList());
+    	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIds());
     	
 
     	dbVaccine.setDiseases(diseaseList);
@@ -66,7 +66,7 @@ public class VaccineController {
     	existVaccine.setNumOfShots(vaccine.getNumOfShots());
     	existVaccine.setShotInterval(vaccine.getShotInterval());
     	
-    	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIdList());
+    	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIds());
     	existVaccine.setDiseases(diseaseList);
 
     	Vaccine updatedVaccine = vaccineRepository.save(existVaccine);
