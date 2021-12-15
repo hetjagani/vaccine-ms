@@ -28,6 +28,7 @@ const Login = () => {
 
         if (token) {
           setCookie('auth', token);
+          history.push('/dashboard');
         }
       })
       .catch((err) => {

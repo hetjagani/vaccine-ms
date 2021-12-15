@@ -6,6 +6,7 @@ import { getCookie } from 'react-use-cookie';
 import { setCookie } from 'react-use-cookie';
 import Navigation from '../../components/Navigation';
 import { convertDate } from '../../util/date';
+import jwt from 'jsonwebtoken';
 
 function Signup() {
   const token = getCookie('auth');
@@ -41,7 +42,7 @@ function Signup() {
       gender,
     };
     console.log(data);
-    
+
     axios
       .post(`/auth/signup`, data)
       .then((res) => {
@@ -49,6 +50,12 @@ function Signup() {
         if (token) {
           setCookie('auth', token);
         }
+        const data = jwt.decode(token);
+        if (data && data.roles === 'ADMIN') {
+          history.push('/vaccine');
+          return;
+        }
+        history.push('/dashboard');
       })
       .catch((err) => {
         history.push('/userVerification');
@@ -59,9 +66,9 @@ function Signup() {
   return (
     <div>
       <Navigation />
-      <Container style={{width:'50%'}}>
+      <Container style={{ width: '50%' }}>
         Please provide Your Details
-        <div style={{ margin: '20px',textAlign:'left' }}>
+        <div style={{ margin: '20px', textAlign: 'left' }}>
           <Form onSubmit={handleSubmit}>
             <Row className="mb-3">
               <Form.Group controlId="validationCustom02">
@@ -87,7 +94,7 @@ function Signup() {
             </Row>
             <Row className="mb-3">
               <Form.Group controlId="validationCustom01">
-                <Form.Label style={{textAlign:'left'}}>First name</Form.Label>
+                <Form.Label style={{ textAlign: 'left' }}>First name</Form.Label>
                 <Form.Control
                   required
                   type="text"
@@ -97,8 +104,8 @@ function Signup() {
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              </Row>
-              <Row className="mb-3">
+            </Row>
+            <Row className="mb-3">
               <Form.Group controlId="validationCustom02">
                 <Form.Label>Middle name</Form.Label>
                 <Form.Control
@@ -110,8 +117,8 @@ function Signup() {
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              </Row>
-              <Row className="mb-3">
+            </Row>
+            <Row className="mb-3">
               <Form.Group controlId="validationCustom02">
                 <Form.Label>Last name</Form.Label>
                 <Form.Control
@@ -123,7 +130,7 @@ function Signup() {
                 />
                 <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
               </Form.Group>
-              </Row>
+            </Row>
             <Row className="mb-3">
               <Form.Group controlId="validationCustom03">
                 <Form.Label>Street</Form.Label>
@@ -137,8 +144,8 @@ function Signup() {
                   Please provide a valid city.
                 </Form.Control.Feedback>
               </Form.Group>
-              </Row>
-              <Row className="mb-3">
+            </Row>
+            <Row className="mb-3">
               <Form.Group controlId="validationCustom03">
                 <Form.Label>City</Form.Label>
                 <Form.Control
@@ -151,8 +158,8 @@ function Signup() {
                   Please provide a valid city.
                 </Form.Control.Feedback>
               </Form.Group>
-              </Row>
-              <Row className="mb-3">
+            </Row>
+            <Row className="mb-3">
               <Form.Group controlId="validationCustom04">
                 <Form.Label>State</Form.Label>
                 <Form.Control
@@ -165,8 +172,8 @@ function Signup() {
                   Please provide a valid state.
                 </Form.Control.Feedback>
               </Form.Group>
-              </Row>
-              <Row className="mb-3">
+            </Row>
+            <Row className="mb-3">
               <Form.Group controlId="validationCustom05">
                 <Form.Label>Zipcode</Form.Label>
                 <Form.Control
@@ -202,14 +209,21 @@ function Signup() {
                       value="FEMALE"
                       onChange={(e) => setGender(e.target.value)}
                     />
+                    <Form.Check
+                      type="radio"
+                      label="Other"
+                      name="formHorizontalRadios"
+                      id="formHorizontalRadios2"
+                      value="OTHER"
+                      onChange={(e) => setGender(e.target.value)}
+                    />
                   </Col>
                 </Form.Group>
               </fieldset>
-              </Row>
+            </Row>
 
-              <Row className="mb-3">
+            <Row className="mb-3">
               <Form.Group controlId="validationCustom05">
-
                 <Form.Label>Date Of Birth:</Form.Label>
                 <Form.Control
                   type="date"
@@ -217,13 +231,13 @@ function Signup() {
                   required
                   onChange={(e) => setDateOfBirth(e.target.value)}
                 />
-                </Form.Group>
-                </Row>
-                <Row className="mb-3">
-                  <div style={{textAlign:'center'}} >
-                    <Button type="submit">Sign Up</Button>
-                  </div>
-                </Row>
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
+              <div style={{ textAlign: 'center' }}>
+                <Button type="submit">Sign Up</Button>
+              </div>
+            </Row>
           </Form>
         </div>
       </Container>

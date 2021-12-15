@@ -65,12 +65,4 @@ public class VaccineRequest {
 	public void setDuration(Integer duration) {
 		this.duration = duration;
 	}
-
-	public List<Integer> getDiseaseIds() {
-		return diseaseIds;
-	}
-
-	public void setDiseaseIds(List<Integer> diseaseIdList) {
-		this.diseaseIds = diseaseIdList;
-	}
 }
