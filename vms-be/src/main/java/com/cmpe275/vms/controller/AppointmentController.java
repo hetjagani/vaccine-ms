@@ -88,13 +88,13 @@ public class AppointmentController {
     	List<Appointment> appointments = new ArrayList<Appointment>();
         if(date!=null && past==null) {
             LocalDate ld1 = date.plusMonths(12);
-            LocalDate ld2 = date.plusMonths(24);
-            appointments = appointmentRepository.findNext12MonthsAppointments(ld1.toString(),ld2.toString());
+            System.out.println();
+            appointments = appointmentRepository.findNext12MonthsAppointments(date.toString(),ld1.toString(),LocalTime.now().toString());
         	
         }else if((date==null) && (past.equalsIgnoreCase("false") || past==null)) {
-        	appointments = appointmentRepository.findAllFutureAppointments();
+        	appointments = appointmentRepository.findAllFutureAppointments(LocalDate.now().toString(),LocalTime.now().toString());
         }else {
-        	appointments = appointmentRepository.findAllPastAppointments();
+        	appointments = appointmentRepository.findAllPastAppointments(LocalDate.now().toString(),LocalTime.now().toString());
         }
         return ResponseEntity.ok(appointments);
     }
