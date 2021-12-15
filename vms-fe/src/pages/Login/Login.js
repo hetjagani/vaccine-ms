@@ -1,9 +1,9 @@
 import { Button, Container, Navbar } from 'react-bootstrap';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import styles from './Login.module.css';
 import axios from 'axios';
-import { setCookie } from 'react-use-cookie';
+import { getCookie, setCookie } from 'react-use-cookie';
 import Navigation from '../../components/Navigation';
 import iconGoogle from '../../assets/images/icon-google.png';
 import { useHistory } from 'react-router-dom';
@@ -65,12 +65,24 @@ const Login = () => {
           <Button variant="primary" type="submit">
             Login
           </Button>
-          <Button variant="primary" type="submit" style={{ marginLeft: '15px' }} onClick={() => history.push("/signup")}>
+          <Button
+            variant="primary"
+            type="submit"
+            style={{ marginLeft: '15px' }}
+            onClick={() => history.push('/signup')}
+          >
             Sign Up
           </Button>
         </Form>
-        <div style={{ margin: '50px', backgroundColor: '#3569bd', padding: '10px', borderRadius: '10px' }}>
-          <a href={GOOGLE_AUTH_URL} style={{ textDecoration: 'none', color: 'white'}}>
+        <div
+          style={{
+            margin: '50px',
+            backgroundColor: '#3569bd',
+            padding: '10px',
+            borderRadius: '10px',
+          }}
+        >
+          <a href={GOOGLE_AUTH_URL} style={{ textDecoration: 'none', color: 'white' }}>
             <span style={{ margin: '15px' }}>or Sign in with</span>
             <img src={iconGoogle} alt="Sign in with google" style={{ height: '40px' }} />
           </a>

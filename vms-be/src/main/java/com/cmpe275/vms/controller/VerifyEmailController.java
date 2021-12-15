@@ -1,6 +1,8 @@
 package com.cmpe275.vms.controller;
 
 import com.cmpe275.vms.exception.ResourceNotFoundException;
+import com.cmpe275.vms.model.AuthProvider;
+import com.cmpe275.vms.model.Role;
 import com.cmpe275.vms.model.User;
 import com.cmpe275.vms.model.VerifyToken;
 import com.cmpe275.vms.repository.UserRepository;
@@ -42,6 +44,15 @@ public class VerifyEmailController {
 
         user.setVerified(true);
         userRepository.save(user);
+
+        if(user.getProvider() == AuthProvider.google){
+            return new ModelAndView("redirect:"+verifyRedirect+"/oauth2/getdetails");
+        } else if (user.getProvider() == AuthProvider.local){
+            if(user.getRole() == Role.ADMIN)
+                return new ModelAndView("redirect:"+verifyRedirect+"/disease");
+            else
+                return new ModelAndView("redirect:"+verifyRedirect+"/dashboard");
+        }
 
         return new ModelAndView("redirect:"+verifyRedirect);
     }

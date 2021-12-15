@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Alert } from 'react-bootstrap';
 import React, { useEffect, useState, fieldset } from 'react';
 import { Button, Col, Container, Form, InputGroup, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
@@ -60,12 +61,11 @@ function OAuthUserDetails() {
       })
       .then((res) => {
         if (res && res.data) {
-          if (res.data.gender) {
+          if (res.data.verified && res.data.gender) {
             const token = getCookie('auth');
             const data = jwt.decode(token);
             console.log(data);
             if (data && data.roles === 'ADMIN') {
-              console.log('lalalal');
               history.push('/vaccine');
               return;
             }
@@ -96,6 +96,11 @@ function OAuthUserDetails() {
             setGender(res.data.gender);
           }
         }
+      })
+      .catch((err) => {
+        if (err.response && err.response.status == 401) {
+          history.push('/userVerification');
+        }
       });
   };
 
@@ -107,7 +112,7 @@ function OAuthUserDetails() {
     <div>
       <Navigation />
       <Container style={{ width: '50%' }}>
-        Please provide Your Details
+        <h3>Please provide Your Details</h3>
         <div style={{ margin: '20px', textAlign: 'left' }}>
           <Form onSubmit={handleSubmit}>
             <Row className="mb-3">
