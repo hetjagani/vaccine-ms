@@ -14,6 +14,7 @@ import com.cmpe275.vms.util.MailUtil;
 import com.cmpe275.vms.util.RandomTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Example;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -74,8 +75,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             // create VerifyToken entity
             String verificationToken = RandomTokenUtil.generateToken();
             VerifyToken verifyToken = new VerifyToken(user.getEmail(), verificationToken);
-            VerifyToken createdToken = verifyTokenRepository.save(verifyToken);
-            String emailText = MailUtil.getVerificationMail(createdToken, verifyEndpoint);
+
+            VerifyToken eg = new VerifyToken();
+            eg.setEmail(user.getEmail());
+            Optional<VerifyToken> op = verifyTokenRepository.findOne(Example.of(eg));
+            if(op.isPresent()) {
+               verifyToken = op.get();
+            } else {
+                verifyTokenRepository.save(verifyToken);
+            }
+            String emailText = MailUtil.getVerificationMail(verifyToken, verifyEndpoint);
             String emailSubject = "Please verify your email address for VMS";
 
             try {
