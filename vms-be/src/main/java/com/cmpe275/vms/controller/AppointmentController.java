@@ -9,6 +9,9 @@ import com.cmpe275.vms.repository.AppointmentRepository;
 import com.cmpe275.vms.repository.ClinicRepository;
 import com.cmpe275.vms.repository.UserRepository;
 import com.cmpe275.vms.repository.VaccineRepository;
+import com.cmpe275.vms.security.CurrentUser;
+import com.cmpe275.vms.security.UserPrincipal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/appointments")
@@ -65,7 +69,6 @@ public class AppointmentController {
         for(Object[] asp: dbExistAppointments) {
         	map.put(asp[0].toString().substring(0, 5), Integer.parseInt(asp[1].toString()));
         }
-        
         List<AppointmentSlotsResp> allSlots = new ArrayList<AppointmentSlotsResp>();
         DateTimeFormatter dmf = DateTimeFormatter.ofPattern("HH:mm");
         for(LocalTime lt: timeSlots) {
@@ -83,18 +86,25 @@ public class AppointmentController {
     }
     
     @GetMapping
-    public ResponseEntity<List<Appointment>> getAllAppointments(@RequestParam(required=false) String past, @RequestParam(required=false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<List<Appointment>> getAllAppointments(@CurrentUser UserPrincipal userPrincipal, @RequestParam(required=false) String past, @RequestParam(required=false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date) {
         System.out.println(date);
+        Optional<User> optUser = userRepository.findByEmail(userPrincipal.getUsername());
+        
+        if(optUser.isEmpty()) {
+        	throw new ResourceNotFoundException("User with Email:", userPrincipal.getUsername(), "not found");
+        }
+        
+        User user = optUser.get();
     	List<Appointment> appointments = new ArrayList<Appointment>();
         if(date!=null && past==null) {
             LocalDate ld1 = date.plusMonths(12);
             System.out.println();
-            appointments = appointmentRepository.findNext12MonthsAppointments(date.toString(),ld1.toString(),LocalTime.now().toString());
+            appointments = appointmentRepository.findNext12MonthsAppointments(date.toString(),ld1.toString(),LocalTime.now().toString(),user.getMrn());
         	
         }else if((date==null) && (past.equalsIgnoreCase("false") || past==null)) {
-        	appointments = appointmentRepository.findAllFutureAppointments(LocalDate.now().toString(),LocalTime.now().toString());
+        	appointments = appointmentRepository.findAllFutureAppointments(LocalDate.now().toString(),LocalTime.now().toString(),user.getMrn());
         }else {
-        	appointments = appointmentRepository.findAllPastAppointments(LocalDate.now().toString(),LocalTime.now().toString());
+        	appointments = appointmentRepository.findAllPastAppointments(LocalDate.now().toString(),LocalTime.now().toString(),user.getMrn());
         }
         return ResponseEntity.ok(appointments);
     }

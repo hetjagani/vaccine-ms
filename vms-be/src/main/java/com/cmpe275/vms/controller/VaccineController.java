@@ -1,11 +1,16 @@
 package com.cmpe275.vms.controller;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,10 +18,16 @@ import org.springframework.web.bind.annotation.*;
 
 import com.cmpe275.vms.exception.ResourceNotFoundException;
 import com.cmpe275.vms.model.Disease;
+import com.cmpe275.vms.model.User;
 import com.cmpe275.vms.model.Vaccine;
+import com.cmpe275.vms.payload.VaccineDueResp;
 import com.cmpe275.vms.payload.VaccineRequest;
+import com.cmpe275.vms.repository.AppointmentRepository;
 import com.cmpe275.vms.repository.DiseaseRepository;
+import com.cmpe275.vms.repository.UserRepository;
 import com.cmpe275.vms.repository.VaccineRepository;
+import com.cmpe275.vms.security.CurrentUser;
+import com.cmpe275.vms.security.UserPrincipal;
 
 // left to add the authorization logic for vaccines endpoint
 @RestController
@@ -29,7 +40,58 @@ public class VaccineController {
 
 	@Autowired
 	private DiseaseRepository diseaseRepository;
+	
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private AppointmentRepository appointmentRepository;
+	
+	@GetMapping("/due")
+	public ResponseEntity<List<VaccineDueResp>> getAllVaccinesDue(@CurrentUser UserPrincipal userPrincipal, @RequestParam(required=false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date){
+		Optional<User> oneUser = userRepository.findByEmail(userPrincipal.getUsername());
+		
+		if(oneUser.isEmpty()) {
+			throw new ResourceNotFoundException("Email", userPrincipal.getUsername(), "not Exists");
+		}
+		
+		User user = oneUser.get();
 
+		List<Object[]> vaccineList = null;
+		if(date!=null) {
+			LocalTime time = LocalTime.now();
+			System.out.println(date+" "+time);
+			vaccineList = appointmentRepository.findUserVaccineFromGivenTime(user.getMrn(),date.toString(),time.toString());
+		}else {
+			vaccineList = appointmentRepository.findUserVaccineShotsTaken(user.getMrn());
+		}	
+
+		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        System.out.println(map.size());
+		
+		for(Object[] v : vaccineList) {
+			map.put(Integer.parseInt(v[0].toString()), Integer.parseInt(v[1].toString()));
+		}
+		
+		List<Vaccine> vaccinesList = vaccineRepository.findAll();
+		
+		for(Vaccine v : vaccinesList) {
+			System.out.println(v.toString());
+		}
+		List<VaccineDueResp> vaccineResp = new ArrayList<VaccineDueResp>();
+		
+		for(Vaccine v : vaccinesList) {
+			if(map.containsKey(v.getId())) {
+				int val = v.getNumOfShots()-map.get(v.getId());
+				if(val > 0)
+					vaccineResp.add(new VaccineDueResp(v.getId(),v.getName(),v.getManufacturer(),v.getNumOfShots(),v.getShotInterval(),v.getDuration(),map.get(v.getId())+1));
+			}else
+				vaccineResp.add(new VaccineDueResp(v.getId(),v.getName(),v.getManufacturer(),v.getNumOfShots(),v.getShotInterval(),v.getDuration(),1));
+		}
+		
+		return ResponseEntity.ok(vaccineResp);
+	}
+	
 	@GetMapping
 	public ResponseEntity<List<Vaccine>> getAllVaccines(){
 		List<Vaccine> vaccineList = vaccineRepository.findAll();
@@ -43,7 +105,7 @@ public class VaccineController {
     
     @PostMapping
     public ResponseEntity<?> createVaccine(@Valid @RequestBody VaccineRequest vaccine){
-    	Vaccine dbVaccine = new Vaccine(vaccine.getName(),vaccine.getManufacturer(),vaccine.getNumOfShots(),vaccine.getShotInterval(),vaccine.getDuration() );
+    	Vaccine dbVaccine = new Vaccine(vaccine.getName(),vaccine.getManufacturer(),vaccine.getNumOfShots(),vaccine.getShotInterval(),vaccine.getDuration());
     	List<Disease> diseaseList = diseaseRepository.findAllById(vaccine.getDiseaseIds());
     	
 
