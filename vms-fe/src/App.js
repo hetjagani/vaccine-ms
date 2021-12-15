@@ -8,7 +8,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import OAuth2RedirectHandler from './components/OAuth2RedirectHandler';
 import OAuthUserDetails from './components/OAuthUserDetails';
 import CustomerDashboard from './components/CustomerDashboard';
-
+import UserVerification from './pages/UserVerification/UserVerification'
 
 axios.defaults.baseURL = window.BACKEND_API_URL;
 axios.interceptors.request.use((req) => {
@@ -27,6 +27,7 @@ function App() {
         <Switch>
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup}/>
+          <Route path='/userVerification' component={UserVerification}/>
           <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
           <Route path="/oauth2/getdetails" component={OAuthUserDetails} />
           <Route path="/dashboard" component={CustomerDashboard} />
