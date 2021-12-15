@@ -5,7 +5,7 @@ import { Button, Col, Dropdown, DropdownButton, Form, Modal } from 'react-bootst
 import { getCookie } from 'react-use-cookie';
 
 import axios from 'axios';
-import DropdownMultiselect from 'react-multiselect-dropdown-bootstrap';
+import MultiSelect from 'multiselect-react-dropdown';
 
 export default function Vaccine() {
   const [vaccines, setVaccines] = useState([]);
@@ -17,9 +17,41 @@ export default function Vaccine() {
   const [numberOfShots, setNumberOfShots] = useState(0);
   const [shotInterval, setShotInterval] = useState(0);
   const [duration, setDuration] = useState(0);
-  const [selectedDisease, setSelectedDisease] = useState('');
-  const [selectedDiseaseId, setselectedDiseaseId] = useState(0);
+  const [selectedDiseaseOptions, setSelectedDiseaseOptions] = useState([]);
+  const [selectedVaccineId, setSelectedVaccineId] = useState(0);
   const handleClose = () => setShowVaccineModal(false);
+
+  const updateVaccineDetails = () => {
+    const token = getCookie('auth');
+    const diseaseIds = [];
+    for (var i = 0; i < selectedDiseaseOptions.length; i++) {
+      diseaseIds.push(selectedDiseaseOptions[i].id);
+    }
+    console.log(diseaseIds);
+    console.log('options', selectedDiseaseOptions);
+
+    const updateVaccineObj = {
+      name: vaccineName,
+      manufacturer,
+      numOfShots: numberOfShots,
+      shotInterval,
+      duration,
+      diseaseIds,
+    };
+    axios
+      .put(`/vaccines/${selectedVaccineId}`, updateVaccineObj, {
+        headers: { Authorization: token },
+      })
+      .then((res) => {
+        console.log(res);
+        getVaccines();
+        setSelectedDiseaseOptions([]);
+        setShowVaccineModal(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const getVaccines = () => {
     const token = getCookie('auth');
@@ -43,13 +75,57 @@ export default function Vaccine() {
 
   const createVaccine = () => {
     const token = getCookie('auth');
+    const diseaseIds = [];
+
+    for (var i = 0; i < selectedDiseaseOptions.length; i++) {
+      diseaseIds.push(selectedDiseaseOptions[i].id);
+    }
+
     const createVaccineObj = {
       name: vaccineName,
-      manufacturer: manufacturer,
+      manufacturer,
       numOfShots: numberOfShots,
-      shotInterval: shotInterval,
-      duration: duration,
+      shotInterval,
+      duration,
+      diseaseIds,
     };
+
+    axios
+      .post('/vaccines', createVaccineObj, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        getVaccines();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setVaccineName('');
+    setManufacturer('');
+    setNumberOfShots(0);
+    setShotInterval(0);
+    setDuration(0);
+    setSelectedDiseaseOptions([]);
+    setShowAddVaccineModal(false);
+  };
+
+  const deleteVaccine = (id) => {
+    const token = getCookie('auth');
+    axios
+      .delete(`/vaccines/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        console.log(res.data);
+        getVaccines();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const getDiseases = () => {
@@ -66,8 +142,8 @@ export default function Vaccine() {
             var tempArr = [];
             res.data.map((disease) => {
               const tempObj = {
-                key: disease.id,
-                label: disease.name,
+                id: disease.id,
+                name: disease.name,
               };
               tempArr.push(tempObj);
             });
@@ -79,26 +155,11 @@ export default function Vaccine() {
         });
     }
   };
-  console.log('diseases', diseases);
-
-  const handleSelectDisease = (id) => {
-    setselectedDiseaseId(id);
-    const diseaseMap = new Map();
-    console.log(diseases);
-    const temp = diseases
-      ? diseases.length > 0
-        ? diseases.map((disease) => {
-            diseaseMap[disease.id] = disease;
-          })
-        : null
-      : null;
-    setSelectedDisease(diseaseMap[id].name);
-  };
 
   useEffect(() => {
     getDiseases();
     getVaccines();
-  }, []);
+  }, [showAddVaccineModal]);
 
   return (
     <div>
@@ -133,7 +194,7 @@ export default function Vaccine() {
 
             <Form.Control
               required
-              type="text"
+              type="Number"
               placeholder=""
               value={numberOfShots}
               onChange={(e) => setNumberOfShots(e.target.value)}
@@ -144,6 +205,7 @@ export default function Vaccine() {
 
             <Form.Control
               required
+              type="Number"
               type="text"
               placeholder=""
               value={duration}
@@ -154,17 +216,20 @@ export default function Vaccine() {
 
             <Form.Control
               required
-              type="text"
+              type="Number"
               placeholder=""
               value={shotInterval}
               onChange={(e) => setShotInterval(e.target.value)}
             />
             <br />
-            <DropdownMultiselect
+            <MultiSelect
               options={diseases}
-              name="diseases"
+              displayValue="name"
+              onSelect={(selected) => {
+                console.log(selected);
+                setSelectedDiseaseOptions(selected);
+              }}
             />
-            <br />
           </Form.Group>
         </Modal.Body>
         <Modal.Footer>
@@ -232,6 +297,21 @@ export default function Vaccine() {
               value={shotInterval}
               onChange={(e) => setShotInterval(e.target.value)}
             />
+            <br />
+            <Form.Label>Disease Associated</Form.Label>
+            <MultiSelect
+              options={diseases}
+              displayValue="name"
+              selectedValues={selectedDiseaseOptions}
+              onSelect={(selected) => {
+                console.log(selected);
+                setSelectedDiseaseOptions(selected);
+              }}
+              onRemove={(selected) => {
+                console.log(selected);
+                setSelectedDiseaseOptions(selected);
+              }}
+            />
             <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
           </Form.Group>
         </Modal.Body>
@@ -239,7 +319,9 @@ export default function Vaccine() {
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary">Save Changes</Button>
+          <Button variant="primary" onClick={updateVaccineDetails}>
+            Save Changes
+          </Button>
         </Modal.Footer>
       </Modal>
       <Button
@@ -250,6 +332,7 @@ export default function Vaccine() {
           setNumberOfShots(0);
           setShotInterval(0);
           setDuration(0);
+          setSelectedDiseaseOptions([]);
           setShowAddVaccineModal(true);
         }}
         style={{ margin: '10px' }}
@@ -287,12 +370,30 @@ export default function Vaccine() {
                             setNumberOfShots(vaccine?.numOfShots);
                             setShotInterval(vaccine?.shotInterval);
                             setDuration(vaccine?.duration);
+                            const tempArr = [];
+                            const tempVAr = vaccine?.diseases
+                              ? vaccine.diseases.length > 0
+                                ? vaccine.diseases.map((ele) => {
+                                    const tempObj = {
+                                      id: ele.id,
+                                      name: ele.name,
+                                    };
+                                    tempArr.push(tempObj);
+                                  })
+                                : null
+                              : null;
+                            setSelectedDiseaseOptions(tempArr);
                             setShowVaccineModal(true);
+                            setSelectedVaccineId(vaccine?.id);
                           }}
                         >
                           Update
                         </Button>
-                        <Button variant="danger" style={{ marginLeft: '10px' }}>
+                        <Button
+                          variant="danger"
+                          style={{ marginLeft: '10px' }}
+                          onClick={() => deleteVaccine(vaccine?.id)}
+                        >
                           Delete
                         </Button>
                       </td>

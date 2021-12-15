@@ -3,6 +3,7 @@ package com.cmpe275.vms.payload;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 public class VaccineRequest {
 	@NotBlank

@@ -5,6 +5,7 @@ import { Button, Col, Container, Form, InputGroup, Row } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { getCookie } from 'react-use-cookie';
 import Navigation from './Navigation';
+import jwt from 'jsonwebtoken';
 
 function OAuthUserDetails() {
   const token = getCookie('auth');
@@ -29,9 +30,8 @@ function OAuthUserDetails() {
     }
 
     setValidated(true);
-    const address = { 'street': street, 'city': city, 'state': stateName, 'zipcode': zipcode };
+    const address = { street: street, city: city, state: stateName, zipcode: zipcode };
     const data = { firstName, lastName, middleName, address, dateOfBirth, gender, validated };
-    console.log('update Data', data);
 
     axios
       .put(`users/me`, data, {
@@ -40,8 +40,13 @@ function OAuthUserDetails() {
         },
       })
       .then((res) => {
-        console.log(res);
-        history.push('/disease');
+        const token = getCookie('auth');
+        const data = jwt.decode(token);
+        if (data && data.roles === 'ADMIN') {
+          history.push('/vaccine');
+          return;
+        }
+        history.push('/dashboard');
       });
 
     // update the user
@@ -57,7 +62,14 @@ function OAuthUserDetails() {
       .then((res) => {
         if (res && res.data) {
           if (res.data.verified && res.data.gender) {
-            history.push('/disease');
+            const token = getCookie('auth');
+            const data = jwt.decode(token);
+            console.log(data);
+            if (data && data.roles === 'ADMIN') {
+              history.push('/vaccine');
+              return;
+            }
+            history.push('/dashboard');
           }
           if (res.data.firstName) {
             setFirstName(res.data.firstName);
@@ -222,6 +234,14 @@ function OAuthUserDetails() {
                       name="formHorizontalRadios"
                       id="formHorizontalRadios2"
                       value="FEMALE"
+                      onChange={(e) => setGender(e.target.value)}
+                    />
+                    <Form.Check
+                      type="radio"
+                      label="Other"
+                      name="formHorizontalRadios"
+                      id="formHorizontalRadios2"
+                      value="OTHER"
                       onChange={(e) => setGender(e.target.value)}
                     />
                   </Col>
