@@ -20,7 +20,7 @@ public class Appointment {
     @DateTimeFormat(pattern = "HH-mm")
     private LocalTime time;
 
-    @JsonFormat(pattern="MM-dd-yyyy")
+    @JsonFormat(pattern="yyyy-MM-dd")
     private LocalDate date;
 
     @Enumerated(EnumType.STRING)

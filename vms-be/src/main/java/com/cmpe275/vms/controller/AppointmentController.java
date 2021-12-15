@@ -44,7 +44,7 @@ public class AppointmentController {
     private UserRepository userRepository;
 
     @GetMapping("/slots")
-    public ResponseEntity<List<AppointmentSlotsResp>> getAllSlots(@RequestParam @DateTimeFormat(pattern="MM-dd-yyyy") Date date, @RequestParam String clinicId){
+    public ResponseEntity<List<AppointmentSlotsResp>> getAllSlots(@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date, @RequestParam String clinicId){
         if(date==null && clinicId==null) {
         	throw new BadRequestException("Must have date and clinicId query parameter");
         }
@@ -59,8 +59,7 @@ public class AppointmentController {
         }
         
         // query to fetch all the appointments done for the date and the clinic
-        LocalDate ld = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        List<Object[]> dbExistAppointments = appointmentRepository.findAllSlotsForDateAndClinic(Integer.parseInt(clinicId), ld.toString());
+        List<Object[]> dbExistAppointments = appointmentRepository.findAllSlotsForDateAndClinic(Integer.parseInt(clinicId), date.toString());
     
         HashMap<String, Integer> map = new HashMap<String, Integer>();
         for(Object[] asp: dbExistAppointments) {
@@ -84,15 +83,15 @@ public class AppointmentController {
     }
     
     @GetMapping
-    public ResponseEntity<List<Appointment>> getAllAppointments(@RequestParam(required=false) String past, @RequestParam(required=false) @DateTimeFormat(pattern="MM-dd-yyyy") Date date) {
-        List<Appointment> appointments = new ArrayList<Appointment>();
-        if(date!=null) {
-            LocalDate ld = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            java.sql.Date sqlD1 = new java.sql.Date(Date.from(ld.plusMonths(12).atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
-            java.sql.Date sqlD2 = new java.sql.Date(Date.from(ld.plusMonths(24).atStartOfDay(ZoneId.systemDefault()).toInstant()).getTime());
-            appointments = appointmentRepository.findNext12MonthsAppointments(sqlD1.toString(),sqlD2.toString());
+    public ResponseEntity<List<Appointment>> getAllAppointments(@RequestParam(required=false) String past, @RequestParam(required=false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date) {
+        System.out.println(date);
+    	List<Appointment> appointments = new ArrayList<Appointment>();
+        if(date!=null && past==null) {
+            LocalDate ld1 = date.plusMonths(12);
+            LocalDate ld2 = date.plusMonths(24);
+            appointments = appointmentRepository.findNext12MonthsAppointments(ld1.toString(),ld2.toString());
         	
-        }else if(date==null && (past=="false" || past==null)) {
+        }else if((date==null) && (past.equalsIgnoreCase("false") || past==null)) {
         	appointments = appointmentRepository.findAllFutureAppointments();
         }else {
         	appointments = appointmentRepository.findAllPastAppointments();

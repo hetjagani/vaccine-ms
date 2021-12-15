@@ -13,9 +13,9 @@ public class AppointmentRequest {
     @DateTimeFormat(pattern = "HH:mm")
     private LocalTime time;     // time in interval of 15 minutes
 
-    @JsonFormat(pattern= "MM-dd-yyyy")
+    @JsonFormat(pattern= "yyyy-MM-dd")
     private LocalDate date;
-
+    
     private List<Integer> vaccineIds; // atmost 4 vaccines
     private Integer clinicId;
     private String userId;
