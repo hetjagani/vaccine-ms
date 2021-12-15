@@ -101,7 +101,6 @@ function OAuthUserDetails() {
       <Navigation />
       <Container style={{ width: '50%' }}>
         <h3>Please provide Your Details</h3>
-        <Alert>Please verify your email before filling these details</Alert>
         <div style={{ margin: '20px', textAlign: 'left' }}>
           <Form onSubmit={handleSubmit}>
             <Row className="mb-3">
