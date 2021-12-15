@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +21,7 @@ public class Appointment {
     private LocalTime time;
 
     @JsonFormat(pattern="MM-dd-yyyy")
-    private Date date;
+    private LocalDate date;
 
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;      // INIT, CHECKIN, NOSHOW, CANCEL
@@ -45,10 +47,11 @@ public class Appointment {
 
     public Appointment() {}
 
-    public Appointment(Integer id, LocalTime time, AppointmentStatus status) {
+    public Appointment(Integer id, LocalTime time, AppointmentStatus status, LocalDate date) {
         this.id = id;
         this.time = time;
         this.status = status;
+        this.date = date;
     }
 
     public Integer getId() {
@@ -99,11 +102,11 @@ public class Appointment {
         this.user = user;
     }
 
-    public Date getDate() {
-        return date;
-    }
+	public LocalDate getDate() {
+		return date;
+	}
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
+	public void setDate(LocalDate date) {
+		this.date = date;
+	}
 }

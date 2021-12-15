@@ -4,6 +4,7 @@ import com.cmpe275.vms.exception.BadRequestException;
 import com.cmpe275.vms.exception.ResourceNotFoundException;
 import com.cmpe275.vms.model.*;
 import com.cmpe275.vms.payload.AppointmentRequest;
+import com.cmpe275.vms.payload.AppointmentSlotsResp;
 import com.cmpe275.vms.repository.AppointmentRepository;
 import com.cmpe275.vms.repository.ClinicRepository;
 import com.cmpe275.vms.repository.UserRepository;
@@ -17,9 +18,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -39,6 +43,46 @@ public class AppointmentController {
     @Autowired
     private UserRepository userRepository;
 
+    @GetMapping("/slots")
+    public ResponseEntity<List<AppointmentSlotsResp>> getAllSlots(@RequestParam @DateTimeFormat(pattern="MM-dd-yyyy") Date date, @RequestParam String clinicId){
+        if(date==null && clinicId==null) {
+        	throw new BadRequestException("Must have date and clinicId query parameter");
+        }
+        
+    	Clinic clinic = clinicRepository.findById(Integer.parseInt(clinicId)).orElseThrow(() -> new ResourceNotFoundException("clinic", "id", clinicId));
+        
+        List<LocalTime> timeSlots = new ArrayList<LocalTime>();
+        LocalTime current = clinic.getStartTime();
+        while(current.isBefore(clinic.getEndTime())) {
+        	timeSlots.add(current);
+        	current = current.plusMinutes(15);
+        }
+        
+        // query to fetch all the appointments done for the date and the clinic
+        LocalDate ld = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        List<Object[]> dbExistAppointments = appointmentRepository.findAllSlotsForDateAndClinic(Integer.parseInt(clinicId), ld.toString());
+    
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        for(Object[] asp: dbExistAppointments) {
+        	map.put(asp[0].toString().substring(0, 5), Integer.parseInt(asp[1].toString()));
+        }
+        
+        List<AppointmentSlotsResp> allSlots = new ArrayList<AppointmentSlotsResp>();
+        DateTimeFormatter dmf = DateTimeFormatter.ofPattern("HH:mm");
+        for(LocalTime lt: timeSlots) {
+        	
+        	if(map.containsKey(lt.toString())) {
+        		int val = clinic.getNumberOfPhysicians() - map.get(lt.toString());
+        		if(val > 0)
+        			allSlots.add(new AppointmentSlotsResp(lt, val));
+        	}else {
+        		allSlots.add(new AppointmentSlotsResp(lt, clinic.getNumberOfPhysicians()));
+        	}
+        }
+        
+        return ResponseEntity.ok(allSlots);
+    }
+    
     @GetMapping
     public ResponseEntity<List<Appointment>> getAllAppointments(@RequestParam(required=false) String past, @RequestParam(required=false) @DateTimeFormat(pattern="MM-dd-yyyy") Date date) {
         List<Appointment> appointments = new ArrayList<Appointment>();
@@ -82,7 +126,7 @@ public class AppointmentController {
         }
         
         // check whether the appointment is within the 12 months from current time or not
-        LocalDate dateC = request.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate dateC = request.getDate();
         LocalDate dateF = LocalDate.now().plusMonths(12);
         
         if(dateC.isAfter(dateF)) {
