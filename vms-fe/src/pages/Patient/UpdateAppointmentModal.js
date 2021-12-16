@@ -15,7 +15,14 @@ function UpdateAppointmentModal({ selectedAppointment, showUpdateModal, setShowU
   const maxAvailableDate = `${currentDateTime.getMonth() + 1}-${currentDateTime.getDate()}-${
     currentDateTime.getFullYear() + 1
   }`;
-  const [startDate, setStartDate] = useState(new Date(currentDate));
+  const [startDate, setStartDate] = useState(
+    selectedAppointment && selectedAppointment.date
+      ? () => {
+          const parts = selectedAppointment.date.split('-');
+          return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+      : new Date()
+  );
   const [availableSlots, setAvailableSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(
@@ -60,24 +67,29 @@ function UpdateAppointmentModal({ selectedAppointment, showUpdateModal, setShowU
     }
   };
 
+  const checkProperties = (obj) => {
+    Object.keys(obj).forEach((key) => {
+      if (obj[key] === null || obj[key] === 'null' || obj[key] === '' || obj[key] === undefined) {
+        delete obj[key];
+      }
+    });
+  };
+
   const updateAppointment = async () => {
-    if (!selectedSlot) {
-      toast.error('Please select a time slot to update to!');
-      return;
-    }
     const vaccineIds = [];
     selectedAppointment.vaccines.forEach((vaccine) => {
       vaccineIds.push(vaccine.id);
     });
     const userDetails = await getUserDetails();
     const updateAppointmentObj = {
-      time: selectedSlot.time,
+      time: selectedSlot ? selectedSlot.time : null,
       vaccineIds,
       clinicId: selectedAppointment.clinic.id,
       userId: userDetails.mrn,
       date: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
       status: selectedStatus,
     };
+    checkProperties(updateAppointmentObj);
     axios
       .put(`/appointments/${selectedAppointment.id}`, updateAppointmentObj)
       .then((res) => {
@@ -111,6 +123,7 @@ function UpdateAppointmentModal({ selectedAppointment, showUpdateModal, setShowU
       const diffTime = Math.abs(selectedDateTime - currDate);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
       if (diffDays > 1) {
+        setSelectedStatus('INIT');
         setStatusOptions(['INIT', 'NOSHOW']);
       } else {
         setStatusOptions(['INIT', 'CHECKIN', 'NOSHOW']);
