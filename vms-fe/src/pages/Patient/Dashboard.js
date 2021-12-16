@@ -47,6 +47,7 @@ const Dashboard = () => {
     currentDateTime.getFullYear() + 1
   }`;
   const [startDate, setStartDate] = useState(new Date(currentDate));
+  const [navbarStartDate, setNavbarStartDate] = useState(new Date(currentDate));
 
   const getClinics = () => {
     axios
@@ -67,7 +68,9 @@ const Dashboard = () => {
       axios
         .get('/vaccines/due', {
           params: {
-            date: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
+            date: `${currentDate.getFullYear()}-${
+              currentDate.getMonth() + 1
+            }-${currentDate.getDate()}`,
           },
         })
         .then((res) => {
@@ -164,7 +167,9 @@ const Dashboard = () => {
     axios
       .get(`/appointments`, {
         params: {
-          past: false,
+          date: `${navbarStartDate.getFullYear()}-${
+            navbarStartDate.getMonth() + 1
+          }-${navbarStartDate.getDate()}`,
         },
       })
       .then((res) => {
@@ -198,6 +203,10 @@ const Dashboard = () => {
     getFutureAppointments();
     getClinics();
   }, []);
+
+  useEffect(() => {
+    getFutureAppointments();
+  }, [navbarStartDate]);
 
   return (
     <>
@@ -267,7 +276,7 @@ const Dashboard = () => {
         />
       ) : null}
       <div>
-        <PatientNavbar />
+        <PatientNavbar navbarStartDate={navbarStartDate} setNavbarStartDate={setNavbarStartDate} />
         <div style={{ width: '100%' }}>
           <Row style={{ marginTop: '50px', marginBottom: '20px' }}>
             <Col>
