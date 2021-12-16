@@ -45,14 +45,6 @@ public class VerifyEmailController {
         user.setVerified(true);
         userRepository.save(user);
 
-        if(user.getProvider() == AuthProvider.google){
-            return new ModelAndView("redirect:"+verifyRedirect+"/oauth2/getdetails");
-        } else if (user.getProvider() == AuthProvider.local){
-            if(user.getRole() == Role.ADMIN)
-                return new ModelAndView("redirect:"+verifyRedirect+"/disease");
-            else
-                return new ModelAndView("redirect:"+verifyRedirect+"/dashboard");
-        }
 
         return new ModelAndView("redirect:"+verifyRedirect);
     }

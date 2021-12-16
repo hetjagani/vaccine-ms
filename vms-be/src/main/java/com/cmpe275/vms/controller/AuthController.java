@@ -93,8 +93,16 @@ public class AuthController {
         // create VerifyToken entity
         String verificationToken = RandomTokenUtil.generateToken();
         VerifyToken verifyToken = new VerifyToken(createdUser.getEmail(), verificationToken);
-        VerifyToken createdToken = verifyTokenRepository.save(verifyToken);
-        String emailText = MailUtil.getVerificationMail(createdToken, verifyEndpoint);
+
+        VerifyToken ve = new VerifyToken();
+        ve.setEmail(user.getEmail());
+        Optional<VerifyToken> op = verifyTokenRepository.findOne(Example.of(ve));
+        if(op.isPresent()) {
+            verifyToken = op.get();
+        } else {
+            verifyTokenRepository.save(verifyToken);
+        }
+        String emailText = MailUtil.getVerificationMail(verifyToken, verifyEndpoint);
         String emailSubject = "Please verify your email address for VMS";
 
         try {

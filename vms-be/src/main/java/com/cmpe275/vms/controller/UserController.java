@@ -54,7 +54,7 @@ public class UserController {
         List<Object[]> appointmentList = appointmentRepository.findAppointmentsBetweenDates(date1.toString(), date2.toString(), user.getMrn());
 
         int total = appointmentList.size();
-        long totalNoShow = appointmentList.stream().filter((Object[] a) -> a[1].toString().equals(AppointmentStatus.NOSHOW.toString())).count();
+        long totalNoShow = appointmentList.stream().filter((Object[] a) -> ((String)a[1]).equals(AppointmentStatus.NOSHOW.toString())).count();
 
         double noShowRate = 0.0;
         if(total != 0) {
@@ -74,7 +74,7 @@ public class UserController {
         List<Object[]> appointmentList = appointmentRepository.findClinicAppointmentsBetweenDates(date1.toString(), date2.toString(), clinicId);
 
         int total = appointmentList.size();
-        long totalNoShow = appointmentList.stream().filter((Object[] a) -> a[1].toString().equals(AppointmentStatus.NOSHOW.toString())).count();
+        long totalNoShow = appointmentList.stream().filter((Object[] a) -> ((String)a[1]).equals(AppointmentStatus.NOSHOW.toString())).count();
 
         double noShowRate = 0.0;
         if(total != 0) {
