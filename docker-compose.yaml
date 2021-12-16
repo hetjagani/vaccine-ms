@@ -28,3 +28,17 @@ services:
         source: ./vms-fe/node_modules
         target: /app/node_modules
     restart: unless-stopped
+
+  backend:
+    depends_on:
+      - mysqldb
+    build:
+      context: ./vms-be
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - type: bind
+        source: ./vms-be
+        target: /app
+    restart: unless-stopped
