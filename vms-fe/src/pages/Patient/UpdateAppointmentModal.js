@@ -35,7 +35,10 @@ function UpdateAppointmentModal({ selectedAppointment, showUpdateModal, setShowU
       .get('/appointments/slots', {
         params: {
           clinicId: selectedAppointment.clinic.id,
-          date: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
+          date: `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(
+            2,
+            '0'
+          )}-${String(startDate.getDate()).padStart(2, '0')}`,
         },
       })
       .then((res) => {
@@ -86,7 +89,10 @@ function UpdateAppointmentModal({ selectedAppointment, showUpdateModal, setShowU
       vaccineIds,
       clinicId: selectedAppointment.clinic.id,
       userId: userDetails.mrn,
-      date: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
+      date: `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(
+        2,
+        '0'
+      )}-${String(startDate.getDate()).padStart(2, '0')}`,
       status: selectedStatus,
     };
     checkProperties(updateAppointmentObj);

@@ -123,7 +123,10 @@ const Dashboard = () => {
       vaccineIds,
       clinicId: selectedClinicID,
       userId: userDetails.mrn,
-      date: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
+      date: `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(
+        2,
+        '0'
+      )}-${String(startDate.getDate()).padStart(2, '0')}`,
     };
     axios
       .post('/appointments', createAppointmentObj)
@@ -148,7 +151,10 @@ const Dashboard = () => {
       .get('/appointments/slots', {
         params: {
           clinicId: selectedClinicID,
-          date: `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`,
+          date: `${startDate.getFullYear()}-${String(startDate.getMonth() + 1).padStart(
+            2,
+            '0'
+          )}-${String(startDate.getDate()).padStart(2, '0')}`,
         },
       })
       .then((res) => {
@@ -167,9 +173,10 @@ const Dashboard = () => {
     axios
       .get(`/appointments`, {
         params: {
-          date: `${navbarStartDate.getFullYear()}-${
-            navbarStartDate.getMonth() + 1
-          }-${navbarStartDate.getDate()}`,
+          date: `${navbarStartDate.getFullYear()}-${String(navbarStartDate.getMonth() + 1).padStart(
+            2,
+            '0'
+          )}-${String(navbarStartDate.getDate()).padStart(2, '0')}`,
         },
       })
       .then((res) => {
@@ -276,7 +283,11 @@ const Dashboard = () => {
         />
       ) : null}
       <div>
-        <PatientNavbar navbarStartDate={navbarStartDate} setNavbarStartDate={setNavbarStartDate} />
+        <PatientNavbar
+          navbarStartDate={navbarStartDate}
+          setNavbarStartDate={setNavbarStartDate}
+          showDateFlag={true}
+        />
         <div>
           <Row style={{ marginTop: '50px', marginBottom: '20px' }}>
             <Col>
@@ -285,7 +296,6 @@ const Dashboard = () => {
                 onClick={() => {
                   setSelectedButton(1);
                   getFutureAppointments();
-
                   setSelectedSlot(null);
                   setAvailableSlots([]);
                   setSelectedVaccineOptions([]);
@@ -395,7 +405,6 @@ const Dashboard = () => {
                                   </p>
                                 </div>
                               </div>
-
                               <div
                                 style={{
                                   display: 'flex',
