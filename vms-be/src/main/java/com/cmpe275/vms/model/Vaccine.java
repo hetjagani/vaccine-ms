@@ -21,7 +21,7 @@ public class Vaccine {
     private Integer shotInterval;       // in days
     private Integer duration;           // # days vaccine is good for; -1 for lifetime
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "disease_vaccine",
             joinColumns = {@JoinColumn(name = "vaccine_id", referencedColumnName = "id")},

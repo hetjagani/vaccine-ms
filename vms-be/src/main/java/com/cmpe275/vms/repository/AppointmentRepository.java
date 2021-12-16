@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AppointmentRepository extends JpaRepository<Appointment, Integer> {
 
-	@Query(value="SELECT * from appointment WHERE user_id=?3 AND date>?1 OR (time>?2 AND date=?1) ORDER BY date ASC, TIME ASC;",nativeQuery=true)
+	@Query(value="SELECT * from appointment WHERE user_id=?3 AND (date>?1 OR (time>?2 AND date=?1)) ORDER BY date ASC, TIME ASC;",nativeQuery=true)
 	List<Appointment> findAllFutureAppointments(String currentDate, String currentTime, String userId); 
 
-	@Query(value="SELECT * from appointment WHERE user_id=?3 AND date<?1 OR (time<?2 AND date=?1) ORDER BY date DESC, TIME DESC;",nativeQuery=true)
+	@Query(value="SELECT * from appointment WHERE user_id=?3 AND (date<?1 OR (time<?2 AND date=?1)) ORDER BY date DESC, TIME DESC;",nativeQuery=true)
 	List<Appointment> findAllPastAppointments(String currentDate, String currentTime, String userId); 
 	
 	@Query(value="SELECT * from appointment WHERE user_id=?4 AND (date>?1 OR (time>?3 AND date=?1)) AND (date<?2 OR (time<?3 AND date=?2)) ORDER BY date ASC, time ASC;",nativeQuery=true)

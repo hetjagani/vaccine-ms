@@ -26,7 +26,7 @@ public class Appointment {
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;      // INIT, CHECKIN, NOSHOW, CANCEL
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "appointment_vaccine",
             joinColumns = {@JoinColumn(name="appointment_id", referencedColumnName = "id")},
