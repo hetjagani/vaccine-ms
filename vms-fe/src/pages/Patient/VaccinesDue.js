@@ -21,9 +21,9 @@ function VaccinesDue() {
       axios
         .get('/vaccines/due', {
           params: {
-            date: `${navbarStartDate.getFullYear()}-${
+            date: `${navbarStartDate.getFullYear()}-${String(
               navbarStartDate.getMonth() + 1
-            }-${navbarStartDate.getDate()}`,
+            ).padStart(2, '0')}-${String(navbarStartDate.getDate()).padStart(2, '0')}`,
           },
         })
         .then((res) => {

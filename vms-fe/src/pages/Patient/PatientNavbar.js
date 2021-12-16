@@ -1,11 +1,20 @@
 import React, { useState } from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
+import { Button, Nav, Navbar } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { setCookie } from 'react-use-cookie';
 
-function PatientNavbar({ navbarStartDate, setNavbarStartDate }) {
+function PatientNavbar({ navbarStartDate, setNavbarStartDate, showDateFlag }) {
   const navbarCurrentDateTime = new Date();
   const [navbarCurrentTime, setNavbarCurrentTime] = useState('');
+
+  const history = useHistory();
+  const logout = () => {
+    setCookie('auth', '');
+    history.push('/login');
+  };
+
   const changeTime = () => {
     var today = new Date();
     var month = today.getMonth();
@@ -43,31 +52,35 @@ function PatientNavbar({ navbarStartDate, setNavbarStartDate }) {
           <span style={{ marginLeft: '20px', display: 'flex' }}>
             <Nav.Link href="/dashboard">Appointments</Nav.Link>
             <Nav.Link href="/dashboard/vaccines/due">Vaccines Due</Nav.Link>
+            <Nav.Link href="/dashboard/report">Patient Report</Nav.Link>
           </span>
         </div>
       </Navbar.Brand>
       <Navbar.Toggle />
-      <Navbar.Collapse className="justify-content-end">
-        <Navbar.Text>
-          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            Date:
-            <div style={{ marginLeft: '10px', marginRight: '10px' }}>
-              <DatePicker
-                selected={navbarStartDate}
-                onChange={(date) => setNavbarStartDate(date)}
-                onSelect={(date) => setNavbarStartDate(date)}
-                minDate={new Date(currentDate ? currentDate : '12-01-2020')}
-                maxDate={new Date(maxAvailableDate)}
-                placeholderText="Select Date"
-              />
+      {showDateFlag === true ? (
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              Date:
+              <div style={{ marginLeft: '10px', marginRight: '10px' }}>
+                <DatePicker
+                  selected={navbarStartDate}
+                  onChange={(date) => setNavbarStartDate(date)}
+                  onSelect={(date) => setNavbarStartDate(date)}
+                  minDate={new Date(currentDate ? currentDate : '12-01-2020')}
+                  maxDate={new Date(maxAvailableDate)}
+                  placeholderText="Select Date"
+                />
+              </div>
+              <span>
+                Current Time:{' '}
+                {navbarCurrentTime && navbarCurrentTime.length > 0 ? navbarCurrentTime : ''}
+              </span>
             </div>
-            <span>
-              Current Time:{' '}
-              {navbarCurrentTime && navbarCurrentTime.length > 0 ? navbarCurrentTime : ''}
-            </span>
-          </div>
-        </Navbar.Text>
-      </Navbar.Collapse>
+          </Navbar.Text>
+          <Button onClick={() => logout()}>Logout</Button>
+        </Navbar.Collapse>
+      ) : null}
     </Navbar>
   );
 }
