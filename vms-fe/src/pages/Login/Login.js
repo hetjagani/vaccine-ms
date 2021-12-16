@@ -7,6 +7,7 @@ import { getCookie, setCookie } from 'react-use-cookie';
 import Navigation from '../../components/Navigation';
 import iconGoogle from '../../assets/images/icon-google.png';
 import { useHistory } from 'react-router-dom';
+import jwt from 'jsonwebtoken';
 
 const Login = () => {
   const OAUTH2_REDIRECT_URI = 'http://localhost:3000/oauth2/redirect';
@@ -28,6 +29,11 @@ const Login = () => {
 
         if (token) {
           setCookie('auth', token);
+          const data = jwt.decode(token);
+          if (data && data.roles === 'ADMIN') {
+            history.push('/vaccine');
+            return;
+          }
           history.push('/dashboard');
         }
       })
@@ -35,6 +41,22 @@ const Login = () => {
         console.error(err);
       });
   };
+
+  const checkAlreadyLoggedIn = () => {
+    const token = getCookie('auth');
+    if (token) {
+      const data = jwt.decode(token);
+      if (data.roles === 'ADMIN') {
+        history.push('/vaccine');
+        return;
+      }
+      history.push('/dashboard');
+    }
+  };
+
+  useEffect(() => {
+    checkAlreadyLoggedIn();
+  }, []);
 
   return (
     <div>
