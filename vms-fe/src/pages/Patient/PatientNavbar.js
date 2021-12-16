@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Row, Nav, Navbar } from 'react-bootstrap';
+import { Nav, Navbar } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -37,23 +37,37 @@ function PatientNavbar({ navbarStartDate, setNavbarStartDate }) {
 
   return (
     <Navbar bg="light" variant="light">
-      <Container>
-        <Navbar.Brand href="#home">Vaccine Management System</Navbar.Brand>
-        <Nav>
-          Select Date for Appointment:
-          <div style={{ marginLeft: '10px', marginRight: '10px' }}>
-            <DatePicker
-              selected={navbarStartDate}
-              onChange={(date) => setNavbarStartDate(date)}
-              onSelect={(date) => setNavbarStartDate(date)}
-              minDate={new Date(currentDate ? currentDate : '12-01-2020')}
-              maxDate={new Date(maxAvailableDate)}
-              placeholderText="Select Date"
-            />
+      <Navbar.Brand href="#home">
+        <div style={{ display: 'flex', alignItems: 'center', marginLeft: '10px' }}>
+          <span>Vaccine Management System</span>
+          <span style={{ marginLeft: '20px', display: 'flex' }}>
+            <Nav.Link href="/dashboard">Appointments</Nav.Link>
+            <Nav.Link href="/dashboard/vaccines/due">Vaccines Due</Nav.Link>
+          </span>
+        </div>
+      </Navbar.Brand>
+      <Navbar.Toggle />
+      <Navbar.Collapse className="justify-content-end">
+        <Navbar.Text>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            Date:
+            <div style={{ marginLeft: '10px', marginRight: '10px' }}>
+              <DatePicker
+                selected={navbarStartDate}
+                onChange={(date) => setNavbarStartDate(date)}
+                onSelect={(date) => setNavbarStartDate(date)}
+                minDate={new Date(currentDate ? currentDate : '12-01-2020')}
+                maxDate={new Date(maxAvailableDate)}
+                placeholderText="Select Date"
+              />
+            </div>
+            <span>
+              Current Time:{' '}
+              {navbarCurrentTime && navbarCurrentTime.length > 0 ? navbarCurrentTime : ''}
+            </span>
           </div>
-          Current Time: {navbarCurrentTime && navbarCurrentTime.length > 0 ? navbarCurrentTime : ''}
-        </Nav>
-      </Container>
+        </Navbar.Text>
+      </Navbar.Collapse>
     </Navbar>
   );
 }
