@@ -10,6 +10,7 @@ import {
   Dropdown,
   CardGroup,
   Card,
+  Container,
 } from 'react-bootstrap';
 import { getCookie } from 'react-use-cookie';
 import axios from 'axios';
@@ -63,14 +64,13 @@ const Dashboard = () => {
   };
 
   const getVaccinesDue = () => {
+    const dateParts = currentDate.split('-');
     const token = getCookie('auth');
     if (token) {
       axios
         .get('/vaccines/due', {
           params: {
-            date: `${currentDate.getFullYear()}-${
-              currentDate.getMonth() + 1
-            }-${currentDate.getDate()}`,
+            date: `${dateParts[2]}-${dateParts[0]}-${dateParts[1]}`,
           },
         })
         .then((res) => {
@@ -209,7 +209,7 @@ const Dashboard = () => {
   }, [navbarStartDate]);
 
   return (
-    <>
+    <Container fluid>
       <Modal
         dialogClassName="modalWidth"
         show={showAppointmentDetails}
@@ -277,7 +277,7 @@ const Dashboard = () => {
       ) : null}
       <div>
         <PatientNavbar navbarStartDate={navbarStartDate} setNavbarStartDate={setNavbarStartDate} />
-        <div style={{ width: '100%' }}>
+        <div>
           <Row style={{ marginTop: '50px', marginBottom: '20px' }}>
             <Col>
               <Button
@@ -615,7 +615,7 @@ const Dashboard = () => {
           </Row>
         </div>
       </div>
-    </>
+    </Container>
   );
 };
 

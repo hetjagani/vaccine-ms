@@ -13,6 +13,7 @@ import Clinic from './pages/Admin/Clinic';
 import Vaccine from './pages/Admin/Vaccine';
 import Dashboard from './pages/Patient/Dashboard';
 import { Toaster } from 'react-hot-toast';
+import VaccinesDue from './pages/Patient/VaccinesDue';
 
 axios.defaults.baseURL = window.BACKEND_API_URL;
 axios.interceptors.request.use((req) => {
@@ -38,6 +39,7 @@ function App() {
           <Route path="/vaccine" component={Vaccine} />
           <Route path="/oauth2/redirect" component={OAuth2RedirectHandler} />
           <Route path="/oauth2/getdetails" component={OAuthUserDetails} />
+          <Route path="/dashboard/vaccines/due" component={VaccinesDue} />
           <Route path="/dashboard" component={Dashboard} />
         </Switch>
       </BrowserRouter>
