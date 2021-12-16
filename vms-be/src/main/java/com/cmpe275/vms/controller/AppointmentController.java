@@ -12,6 +12,7 @@ import com.cmpe275.vms.repository.VaccineRepository;
 import com.cmpe275.vms.security.CurrentUser;
 import com.cmpe275.vms.security.UserPrincipal;
 
+import com.cmpe275.vms.util.MailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -158,6 +160,26 @@ public class AppointmentController {
 
         Appointment createdAppointment = appointmentRepository.save(appointment);
 
+        String emailSubject = "You have an appointment on "+ request.getDate() + " for vaccination.";
+        String emailText = "Congratulations, you have successfully booked an appointment for vaccination.\nBelow are the details of your appointment.\n";
+        emailText += "Appointment ID: " + createdAppointment.getId() + "\n";
+        emailText += "Appointment Date: " + createdAppointment.getDate() + "\n";
+        emailText += "Appointment Time: " + createdAppointment.getTime() + "\n\n";
+        emailText += "Appointment Status: " + createdAppointment.getStatus().toString() + "\n\n";
+        emailText += "Clinic Name: " + createdAppointment.getClinic().getName() + "\n";
+        emailText += "Clinic Address: " + createdAppointment.getClinic().getAddress() + "\n\n";
+        emailText += "Vaccine Details: \n";
+        List<Vaccine> vaccines = createdAppointment.getVaccines();
+        for(int i=0; i<vaccines.size(); i++) {
+            emailText += "\t"+(i+1)+". Name: "+vaccines.get(i).getName()+" Manufacturer: "+vaccines.get(i).getManufacturer()+"\n";
+        }
+
+        try {
+            MailUtil.sendMail(emailText, emailSubject, user.getEmail());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAppointment);
     }
 
@@ -180,6 +202,26 @@ public class AppointmentController {
         dbAppointment.setVaccines(vaccineList);
 
         Appointment updatedAppointment = appointmentRepository.save(dbAppointment);
+
+        String emailSubject = "You have an updated your appointment on "+ request.getDate() + " for vaccination.";
+        String emailText = "Congratulations, your appointment is updated.\nBelow are the details of your appointment.\n";
+        emailText += "Appointment ID: " + updatedAppointment.getId() + "\n";
+        emailText += "Appointment Date: " + updatedAppointment.getDate() + "\n";
+        emailText += "Appointment Time: " + updatedAppointment.getTime() + "\n\n";
+        emailText += "Appointment Status: " + updatedAppointment.getStatus().toString() + "\n\n";
+        emailText += "Clinic Name: " + updatedAppointment.getClinic().getName() + "\n";
+        emailText += "Clinic Address: " + updatedAppointment.getClinic().getAddress() + "\n\n";
+        emailText += "Vaccine Details: \n";
+        List<Vaccine> vaccines = updatedAppointment.getVaccines();
+        for(int i=0; i<vaccines.size(); i++) {
+            emailText += "\t"+(i+1)+". Name: "+vaccines.get(i).getName()+" Manufacturer: "+vaccines.get(i).getManufacturer()+"\n";
+        }
+
+        try {
+            MailUtil.sendMail(emailText, emailSubject, dbAppointment.getUser().getEmail());
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
 
         return ResponseEntity.ok(updatedAppointment);
     }
