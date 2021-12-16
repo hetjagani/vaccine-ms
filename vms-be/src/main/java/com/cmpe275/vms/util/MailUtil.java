@@ -9,9 +9,9 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class MailUtil {
-    private static final String USERNAME = "vms.cmpe275@gmail.com";
+    private static final String USERNAME = "vaccinemngt@gmail.com";
     private static final String PASSWORD = "Password@123";
-    private static final String EMAIL_FROM = "vms.cmpe275@gmail.com";
+    private static final String EMAIL_FROM = "vaccinemngt@gmail.com";
 
     public static int sendMail(String text, String subject, String targetMail) throws MessagingException, AddressException {
 
