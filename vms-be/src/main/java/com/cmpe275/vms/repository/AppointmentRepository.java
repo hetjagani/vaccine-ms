@@ -26,4 +26,10 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 	
 	@Query(value="SELECT vaccine_id as id, COUNT(*) as num_of_shots FROM appointment JOIN appointment_vaccine ON appointment.id = appointment_vaccine.appointment_id where user_id=?1 AND status!='NOSHOW' AND (date<?2 OR (time<?3 AND date=?2)) GROUP BY vaccine_id;",nativeQuery=true)
 	List<Object[]> findUserVaccineFromGivenTime(String userId, String currentDate, String currentTime);
+
+	@Query(value = "SELECT * from appointment WHERE user_id=?3 AND date>?1 AND date<?2 ORDER BY date ASC, time ASC;", nativeQuery = true)
+	List<Object[]> findAppointmentsBetweenDates(String date1, String date2, String userId);
+
+	@Query(value = "SELECT * from appointment WHERE date>?1 AND date<?2 AND clinic_id=?3 ORDER BY date ASC, time ASC;", nativeQuery = true)
+	List<Object[]> findClinicAppointmentsBetweenDates(String date1, String date2, Integer clinicId);
 }

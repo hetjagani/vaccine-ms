@@ -89,7 +89,6 @@ public class AppointmentController {
     
     @GetMapping
     public ResponseEntity<List<Appointment>> getAllAppointments(@CurrentUser UserPrincipal userPrincipal, @RequestParam(required=false) String past, @RequestParam(required=false) @DateTimeFormat(pattern="yyyy-MM-dd") LocalDate date) {
-        System.out.println(date);
         Optional<User> optUser = userRepository.findByEmail(userPrincipal.getUsername());
         
         if(optUser.isEmpty()) {
@@ -121,13 +120,10 @@ public class AppointmentController {
     // TODO: 15 minute intervals only accepted
     // TODO: send email for the appointment
     @PostMapping
-    public ResponseEntity<Appointment> createAppointment(Principal principal, @RequestBody AppointmentRequest request) {
-        String loggedInEmail = principal.getName();
+    public ResponseEntity<Appointment> createAppointment(@CurrentUser UserPrincipal principal, @RequestBody AppointmentRequest request) {
+        String loginUserID = principal.getName();
 
-        // fetch logged in user
-        User loginUser = userRepository.findByEmail(loggedInEmail).orElseThrow(() -> new ResourceNotFoundException("user", "email", loggedInEmail));
-
-        if(loginUser.getMrn() == request.getUserId()) {
+        if(!loginUserID.equals(request.getUserId())) {
             throw new SecurityException("cannot create other user's appointment");
         }
 

@@ -60,15 +60,13 @@ public class VaccineController {
 		List<Object[]> vaccineList = null;
 		if(date!=null) {
 			LocalTime time = LocalTime.now();
-			System.out.println(date+" "+time);
 			vaccineList = appointmentRepository.findUserVaccineFromGivenTime(user.getMrn(),date.toString(),time.toString());
 		}else {
 			vaccineList = appointmentRepository.findUserVaccineShotsTaken(user.getMrn());
 		}	
 
 		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-        System.out.println(map.size());
-		
+
 		for(Object[] v : vaccineList) {
 			map.put(Integer.parseInt(v[0].toString()), Integer.parseInt(v[1].toString()));
 		}
